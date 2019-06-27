@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="BaseAssistantTheme">
+        <item name="background_color">@color/primary</item>
+        <item name="button_extended_color">@color/white</item>
+        <item name="button_collapsed_color">@color/primary</item>
+        <item name="button_size">56dp</item>
+        <item name="button_margin_end">36dp</item>
+        <item name="button_margin_bottom">36dp</item>
+        <item name="button_gravity">end|bottom</item>
+        <item name="image_start">@drawable/icon_mic</item>
+        <item name="image_stop">@drawable/icon_stop</item>
+    </style>
+
+    <style name="FullScreenDialogStyle">
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorPrimaryDark">@color/primary</item>
+        <item name="colorPrimary">@color/primary</item>
+
+        <!-- Set this to true if you want Full Screen without status bar -->
+        <item name="android:windowFullscreen">false</item>
+
+        <item name="android:windowIsFloating">false</item>
+
+        <!-- This is important! Don't forget to set window background -->
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+
+    <style name="Font">
+        <item name="android:textColor">@color/text</item>
+    </style>
+
+    <style name="Font.User">
+        <item name="android:fontFamily">@font/source_sans_pro_regular</item>
+    </style>
+
+    <style name="Font.Aimybox">
+        <item name="android:fontFamily">@font/source_sans_pro_light</item>
+    </style>
+
+</resources>

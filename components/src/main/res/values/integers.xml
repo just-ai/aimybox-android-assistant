@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="assistant_reveal_time_ms">400</integer>
+</resources>

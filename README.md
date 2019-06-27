@@ -1,2 +1,2 @@
-# aimybox-android-assistant
+# Aimybox Android Assistant
 Embeddable voice assistant written on Kotlin for Android apps

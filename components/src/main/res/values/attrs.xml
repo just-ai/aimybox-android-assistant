@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="buttonLaunchAssistantStyle" format="reference" />
+
+    <declare-styleable name="ExtendableFloatingActionButton">
+        <attr name="background_color" format="color|reference"/>
+        <attr name="button_collapsed_color" format="color|reference"/>
+        <attr name="button_extended_color" format="color|reference"/>
+        <attr name="button_size" format="dimension"/>
+        <attr name="button_margin_start" format="dimension" />
+        <attr name="button_margin_end" format="dimension" />
+        <attr name="button_margin_bottom" format="dimension" />
+        <attr name="button_gravity">
+            <flag name="bottom" value="80" />
+            <flag name="center" value="17" />
+            <flag name="center_horizontal" value="1" />
+            <flag name="center_vertical" value="16" />
+            <flag name="end" value="8388613" />
+            <flag name="left" value="3" />
+            <flag name="right" value="5" />
+            <flag name="start" value="8388611" />
+            <flag name="top" value="48" />
+        </attr>
+
+        <attr name="image_start" format="reference"/>
+        <attr name="image_stop" format="reference"/>
+    </declare-styleable>
+
+</resources>
