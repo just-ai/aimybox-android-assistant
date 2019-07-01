@@ -1,3 +1,7 @@
+val Submodules = listOf(
+    Application("demo", Versions.Aimybox.demo, false),
+    Library("components", Versions.Aimybox.components, true)
+)
 
 object Versions {
     object Sdk {
@@ -6,12 +10,23 @@ object Versions {
         const val compile = target
     }
 
-    const val aimybox = "0.0.1"
+    object Aimybox {
+        const val core = "0.1.0"
+        const val googlePlatform = "0.1.0"
+        const val demo = "0.0.1"
+        const val components = "0.0.1"
+    }
+
+    object Plugins {
+        const val androidGradle = "3.4.1"
+        const val dexCount = "0.8.6"
+        const val bintray = "1.8.4"
+        const val buildInfo = "4.7.5"
+    }
 
     const val kotlin = "1.3.40"
     const val coroutines = "1.3.0-M1"
 
-    const val androidGradle = "3.4.1"
     const val appCompat = "1.0.2"
     const val constraintLayout = "1.1.3"
     const val material = "1.1.0-alpha06"
@@ -24,16 +39,16 @@ object Versions {
     const val okHttp = "3.14.1"
     const val kotson = "2.5.0"
 
-    const val dexCount = "0.8.6"
-
     const val mockk = "1.9"
     const val androidxTest = "1.1.1"
 }
 
 object Plugins {
-    val androidGradle = "com.android.tools.build:gradle" version Versions.androidGradle
     val kotlin = kotlin("gradle-plugin")
-    val dexcount = "com.getkeepsafe.dexcount:dexcount-gradle-plugin" version Versions.dexCount
+    val androidGradle = "com.android.tools.build:gradle" version Versions.Plugins.androidGradle
+    val dexcount = "com.getkeepsafe.dexcount:dexcount-gradle-plugin" version Versions.Plugins.dexCount
+    val bintray = "com.jfrog.bintray.gradle:gradle-bintray-plugin" version Versions.Plugins.bintray
+    val buildInfo = "org.jfrog.buildinfo:build-info-extractor-gradle" version Versions.Plugins.buildInfo
 }
 
 object Libraries {
@@ -56,6 +71,8 @@ object Libraries {
 
         val glide = "com.github.bumptech.glide:glide" version Versions.glide
         val glideCompiler = "com.github.bumptech.glide:compiler" version Versions.glide
+
+        val kotson = "com.github.salomonbrys.kotson:kotson" version Versions.kotson
     }
 
 
