@@ -75,9 +75,9 @@ constructor() : Fragment(), CoroutineScope {
             coroutineContext.cancelChildren()
             launch {
                 if (isVisible) {
-                    fab.show()
+                    fab.expand()
                 } else {
-                    fab.hide()
+                    fab.collapse()
                 }
 
             }

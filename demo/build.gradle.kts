@@ -17,6 +17,7 @@ dependencies {
     batchImplementation(Libraries.Kotlin.coroutines)
 
     implementation(Libraries.Android.kotson)
+    batchImplementation(Libraries.Android.kodein)
 
     implementation("com.justai.aimybox:core:${Versions.aimybox}")
     implementation("com.justai.aimybox:google-platform-speechkit:${Versions.aimybox}")
