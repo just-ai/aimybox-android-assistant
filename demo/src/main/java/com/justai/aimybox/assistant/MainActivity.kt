@@ -20,7 +20,6 @@ class MainActivity : AppCompatActivity(), KodeinAware {
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
 
-
         // TODO request permission
         val assistantFragment = AssistantDialogFragmentImpl()
 

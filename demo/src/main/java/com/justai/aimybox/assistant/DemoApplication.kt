@@ -4,6 +4,7 @@ import android.app.Application
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.generic.bind
+import org.kodein.di.generic.eagerSingleton
 import org.kodein.di.generic.singleton
 
 class DemoApplication : Application(), KodeinAware {

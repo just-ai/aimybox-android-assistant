@@ -20,7 +20,7 @@ object Versions {
     const val aimybox = "0.1.1"
     const val components = "0.0.2"
 
-    const val kotlin = "1.3.40"
+    const val kotlin = "1.3.41"
     const val coroutines = "1.3.0-M1"
 
     const val appCompat = "1.0.2"

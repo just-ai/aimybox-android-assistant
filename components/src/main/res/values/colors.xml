@@ -3,4 +3,5 @@
     <color name="primary">#713F7C</color>
     <color name="white">#FFFFFF</color>
     <color name="text">@color/white</color>
+    <color name="recording">#99FFFFFF</color>
 </resources>

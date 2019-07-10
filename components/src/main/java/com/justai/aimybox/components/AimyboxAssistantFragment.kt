@@ -11,14 +11,14 @@ import androidx.annotation.RequiresPermission
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
+import com.justai.aimybox.Aimybox
 import com.justai.aimybox.components.adapter.AimyboxAssistantAdapter
-import com.justai.aimybox.components.launchfab.ExtendableFloatingActionButton
+import com.justai.aimybox.components.view.AimyboxButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 
@@ -31,7 +31,7 @@ constructor() : Fragment(), CoroutineScope {
     private lateinit var viewModel: AimyboxAssistantViewModel
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: AimyboxAssistantAdapter
-    private lateinit var fab: ExtendableFloatingActionButton
+    private lateinit var aimyboxButton: AimyboxButton
 
     private var revealTimeMs = 0L
 
@@ -64,8 +64,8 @@ constructor() : Fragment(), CoroutineScope {
             adapter = AimyboxAssistantAdapter(requireContext())
             recycler.adapter = adapter
 
-            fab = findViewById(R.id.fragment_aimybox_assistant_fab)
-            fab.setOnClickListener { viewModel.onButtonClick() }
+            aimyboxButton = findViewById(R.id.fragment_aimybox_assistant_button)
+            aimyboxButton.setOnClickListener { viewModel.onButtonClick() }
         }
     }
 
@@ -73,13 +73,14 @@ constructor() : Fragment(), CoroutineScope {
     open fun onViewModelInitialized(viewModel: AimyboxAssistantViewModel) {
         viewModel.isAssistantVisible.observe(this, Observer { isVisible ->
             coroutineContext.cancelChildren()
-            launch {
-                if (isVisible) {
-                    fab.expand()
-                } else {
-                    fab.collapse()
-                }
+            if (isVisible) aimyboxButton.expand() else aimyboxButton.collapse()
+        })
 
+        viewModel.aimyboxState.observe(this, Observer { state ->
+            if (state == Aimybox.State.LISTENING) {
+                aimyboxButton.onRecordingStarted()
+            } else {
+                aimyboxButton.onRecordingStopped()
             }
         })
 

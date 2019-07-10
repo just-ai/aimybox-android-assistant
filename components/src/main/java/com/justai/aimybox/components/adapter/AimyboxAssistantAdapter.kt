@@ -5,11 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.justai.aimybox.components.L
 import com.justai.aimybox.components.R
-import com.justai.aimybox.components.widgets.AssistantWidget
-import com.justai.aimybox.components.widgets.RecognitionWidget
-import com.justai.aimybox.components.widgets.SpeechWidget
+import com.justai.aimybox.components.widget.AssistantWidget
+import com.justai.aimybox.components.widget.RecognitionWidget
+import com.justai.aimybox.components.widget.SpeechWidget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -48,7 +47,6 @@ class AimyboxAssistantAdapter(
     override fun getItemCount(): Int = data.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        L.d("Binding $position")
         val widget = data[position]
         holder.bind(widget)
     }

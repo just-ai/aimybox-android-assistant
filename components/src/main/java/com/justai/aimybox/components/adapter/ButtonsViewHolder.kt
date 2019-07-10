@@ -5,8 +5,8 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.justai.aimybox.components.R
-import com.justai.aimybox.components.widgets.AssistantWidget
-import com.justai.aimybox.components.widgets.ButtonsWidget
+import com.justai.aimybox.components.widget.AssistantWidget
+import com.justai.aimybox.components.widget.ButtonsWidget
 import kotlin.coroutines.CoroutineContext
 
 class ButtonsViewHolder(

@@ -7,8 +7,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.justai.aimybox.components.R
-import com.justai.aimybox.components.widgets.AssistantWidget
-import com.justai.aimybox.components.widgets.RecognitionWidget
+import com.justai.aimybox.components.widget.AssistantWidget
+import com.justai.aimybox.components.widget.RecognitionWidget
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch

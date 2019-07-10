@@ -1,4 +1,4 @@
-package com.justai.aimybox.components.widgets
+package com.justai.aimybox.components.widget
 
 import kotlinx.coroutines.channels.Channel
 

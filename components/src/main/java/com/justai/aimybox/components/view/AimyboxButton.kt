@@ -1,6 +1,7 @@
-package com.justai.aimybox.components.launchfab
+package com.justai.aimybox.components.view
 
 import android.animation.Animator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -22,7 +23,7 @@ import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class ExtendableFloatingActionButton @JvmOverloads constructor(
+internal class AimyboxButton @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet?,
     defStyleAttr: Int = 0
@@ -31,6 +32,7 @@ class ExtendableFloatingActionButton @JvmOverloads constructor(
     private var isExpanded: Boolean = false
 
     private val inkView: View = View(context)
+    private val recordingView: View = View(context)
     private val actionButton = FloatingActionButton(context)
     private var contentViews = emptyList<View>()
 
@@ -48,55 +50,62 @@ class ExtendableFloatingActionButton @JvmOverloads constructor(
     private var inkViewRadiusCollapsed: Float = 0F
     private var inkViewRadiusExpanded: Float = 0F
 
-    private var animator: ViewPropertyAnimator? = null
-
+    private var inkAnimator: ViewPropertyAnimator? = null
+    private var recordingAnimator: ValueAnimator? = null
 
     init {
         context.withStyledAttributes(
             attrs,
-            R.styleable.ExtendableFloatingActionButton,
+            R.styleable.AimyboxButton,
             defStyleAttr,
             R.style.BaseAssistantTheme
         ) {
-            inkView.background = ShapeDrawable(OvalShape()).apply {
-                paint.color = getColor(R.styleable.ExtendableFloatingActionButton_background_color, Color.TRANSPARENT)
-            }
+            getColor(R.styleable.AimyboxButton_background_color, Color.TRANSPARENT)
+                .let(::createCircleShape)
+                .let(inkView::setBackground)
+
+            getColor(R.styleable.AimyboxButton_recording_color, Color.TRANSPARENT)
+                .let(::createCircleShape)
+                .let(recordingView::setBackground)
 
             buttonExtendedColor =
-                getColor(R.styleable.ExtendableFloatingActionButton_button_extended_color, Color.TRANSPARENT)
+                getColor(R.styleable.AimyboxButton_button_extended_color, Color.TRANSPARENT)
             buttonCollapsedColor =
-                getColor(R.styleable.ExtendableFloatingActionButton_button_collapsed_color, Color.TRANSPARENT)
-            buttonSize = getDimension(R.styleable.ExtendableFloatingActionButton_button_size, 0F)
-            buttonMarginStart = getDimension(R.styleable.ExtendableFloatingActionButton_button_margin_start, 0F).toInt()
-            buttonMarginEnd = getDimension(R.styleable.ExtendableFloatingActionButton_button_margin_end, 0F).toInt()
+                getColor(R.styleable.AimyboxButton_button_collapsed_color, Color.TRANSPARENT)
+            buttonSize = getDimension(R.styleable.AimyboxButton_button_size, 0F)
+            buttonMarginStart = getDimension(R.styleable.AimyboxButton_button_margin_start, 0F).toInt()
+            buttonMarginEnd = getDimension(R.styleable.AimyboxButton_button_margin_end, 0F).toInt()
             buttonMarginBottom =
-                getDimension(R.styleable.ExtendableFloatingActionButton_button_margin_bottom, 0F).toInt()
+                getDimension(R.styleable.AimyboxButton_button_margin_bottom, 0F).toInt()
             buttonGravity = getInteger(
-                R.styleable.ExtendableFloatingActionButton_button_gravity,
+                R.styleable.AimyboxButton_button_gravity,
                 Gravity.BOTTOM or Gravity.END
             )
 
             setButtonColor(buttonCollapsedColor)
-            actionButton.setImageDrawable(getDrawable(R.styleable.ExtendableFloatingActionButton_image_start))
+            actionButton.setImageDrawable(getDrawable(R.styleable.AimyboxButton_image_start))
             actionButton.customSize = buttonSize.toInt()
         }
 
         addView(inkView)
+        addView(recordingView)
         addView(actionButton)
     }
 
     fun expand(duration: Long = revealDurationMs) {
         if (isExpanded) return
 
-        animator?.cancel()
+        inkAnimator?.cancel()
         inkView.isVisible = true
+        inkView.isVisible = true
+        recordingView.isVisible = true
 
         setButtonColor(buttonExtendedColor)
 
 
         val targetScale = inkViewRadiusExpanded / inkViewRadiusCollapsed
 
-        animator = inkView.startInkAnimation(targetScale, duration) {
+        inkAnimator = inkView.startInkAnimation(targetScale, duration) {
             contentViews.forEach { it.isVisible = true }
         }
 
@@ -106,12 +115,14 @@ class ExtendableFloatingActionButton @JvmOverloads constructor(
     fun collapse(duration: Long = revealDurationMs) {
         if (!isExpanded) return
 
-        animator?.cancel()
+        inkAnimator?.cancel()
+        recordingAnimator?.cancel()
         inkView.isVisible = true
+        recordingView.isVisible = false
 
         contentViews.forEach { it.isVisible = false }
 
-        animator = inkView.startInkAnimation(1.0F, duration) {
+        inkAnimator = inkView.startInkAnimation(1.0F, duration) {
             setButtonColor(buttonCollapsedColor)
             inkView.isInvisible = true
         }
@@ -119,8 +130,33 @@ class ExtendableFloatingActionButton @JvmOverloads constructor(
         isExpanded = false
     }
 
+    fun onRecordingStarted() {
+        recordingAnimator?.cancel()
+        recordingAnimator = recordingView.startRecordingAnimation()
+    }
+
+    fun onRecordingStopped() {
+        recordingAnimator?.cancel()
+        recordingView.scaleX = 1F
+        recordingView.scaleY = 1F
+    }
+
     private fun setButtonColor(color: Int) {
         actionButton.backgroundTintList = ColorStateList.valueOf(color)
+    }
+
+    private fun View.startRecordingAnimation() = ValueAnimator().apply {
+        repeatCount = ValueAnimator.INFINITE
+        repeatMode = ValueAnimator.REVERSE
+        setFloatValues(1F, 2F)
+        duration = 500
+        pivotX = width / 2F
+        pivotY = height / 2F
+        addUpdateListener { animator ->
+            scaleX = animator.animatedValue as Float
+            scaleY = animator.animatedValue as Float
+        }
+        start()
     }
 
     private fun View.startInkAnimation(
@@ -156,13 +192,17 @@ class ExtendableFloatingActionButton @JvmOverloads constructor(
         return sqrt(expandHorizontal.pow(2) + expandVertical.pow(2))
     }
 
+    private fun createCircleShape(color: Int) = ShapeDrawable(OvalShape()).apply {
+        paint.color = color
+    }
+
     override fun setOnClickListener(l: OnClickListener?) {
         actionButton.setOnClickListener(l)
     }
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        contentViews = children.filter { it != actionButton && it != inkView }.toList()
+        contentViews = children.filter { it != actionButton && it != inkView && it != recordingView }.toList()
         contentViews.forEach { it.isVisible = false }
         actionButton.bringToFront()
     }
@@ -179,12 +219,13 @@ class ExtendableFloatingActionButton @JvmOverloads constructor(
             height.toFloat(),
             inkView.x,
             inkView.y,
-            buttonSize / 2.0F
+            buttonSize / 2F
         )
 
         MeasureSpec.makeMeasureSpec(buttonSize.toInt(), MeasureSpec.AT_MOST).let { measureSpec ->
             actionButton.measure(measureSpec, measureSpec)
             inkView.measure(measureSpec, measureSpec)
+            recordingView.measure(measureSpec, measureSpec)
         }
 
         actionButton.updateLayoutParams<LayoutParams> {
@@ -200,6 +241,8 @@ class ExtendableFloatingActionButton @JvmOverloads constructor(
         super.onLayout(changed, left, top, right, bottom)
         inkView.x = actionButton.x
         inkView.y = actionButton.y
+        recordingView.x = actionButton.x
+        recordingView.y = actionButton.y
     }
 
 }

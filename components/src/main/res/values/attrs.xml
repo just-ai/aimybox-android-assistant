@@ -3,8 +3,9 @@
 
     <attr name="buttonLaunchAssistantStyle" format="reference" />
 
-    <declare-styleable name="ExtendableFloatingActionButton">
+    <declare-styleable name="AimyboxButton">
         <attr name="background_color" format="color|reference"/>
+        <attr name="recording_color" format="color|reference"/>
         <attr name="button_collapsed_color" format="color|reference"/>
         <attr name="button_extended_color" format="color|reference"/>
         <attr name="button_size" format="dimension"/>

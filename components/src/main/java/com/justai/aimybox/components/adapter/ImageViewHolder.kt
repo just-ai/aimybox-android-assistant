@@ -4,8 +4,8 @@ import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.justai.aimybox.components.R
-import com.justai.aimybox.components.widgets.AssistantWidget
-import com.justai.aimybox.components.widgets.ImageWidget
+import com.justai.aimybox.components.widget.AssistantWidget
+import com.justai.aimybox.components.widget.ImageWidget
 import kotlin.coroutines.CoroutineContext
 
 class ImageViewHolder(
