@@ -29,6 +29,27 @@ This repository contains all you need to embed intelligent voice assistant into 
 
 # How to start using
 
+```kotlin
+    repositories {
+        maven("https://dl.bintray.com/aimybox/aimybox-android-assistant/")
+        maven("https://dl.bintray.com/aimybox/aimybox-android-sdk/")
+    }
+    
+    dependencies {
+        /* Core Aimybox package */
+        implementation("com.justai.aimybox:core:${version}")
+        
+        /* UI components package */
+        implementation("com.justai.aimybox:components:${version}")
+        
+        /* Optional modules */
+        implementation("com.justai.aimybox:google-platform-speechkit:${version}")
+        implementation("com.justai.aimybox:yandex-speechkit:${version}")
+        implementation("com.justai.aimybox:snowboy-speechkit:${version}")
+        implementation("com.justai.aimybox:houndify-speechkit:${version}")
+    }
+```
+
 Please refer to the [demo](https://github.com/aimybox/aimybox-android-assistant/tree/master/demo) to see how to use Aimybox library in your own project.
 
 # Documentation
