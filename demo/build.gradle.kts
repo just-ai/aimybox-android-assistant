@@ -18,6 +18,6 @@ dependencies {
 
     implementation(Libraries.Android.kotson)
 
-    implementation("com.justai.aimybox:core:${Versions.Aimybox.core}")
-    implementation("com.justai.aimybox:google-platform-speechkit:${Versions.Aimybox.googlePlatform}")
+    implementation("com.justai.aimybox:core:${Versions.aimybox}")
+    implementation("com.justai.aimybox:google-platform-speechkit:${Versions.aimybox}")
 }

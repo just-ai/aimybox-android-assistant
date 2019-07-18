@@ -1,6 +1,6 @@
 val Submodules = listOf(
-    Application("demo", Versions.Aimybox.demo, false),
-    Library("components", Versions.Aimybox.components, true)
+    Application("demo", Versions.components, false),
+    Library("components", Versions.components, true)
 )
 
 object Versions {
@@ -10,19 +10,15 @@ object Versions {
         const val compile = target
     }
 
-    object Aimybox {
-        const val core = "0.1.0"
-        const val googlePlatform = "0.1.0"
-        const val demo = "0.0.1"
-        const val components = "0.0.1"
-    }
-
     object Plugins {
         const val androidGradle = "3.4.1"
         const val dexCount = "0.8.6"
         const val bintray = "1.8.4"
         const val buildInfo = "4.7.5"
     }
+
+    const val aimybox = "0.1.1"
+    const val components = "0.0.2"
 
     const val kotlin = "1.3.40"
     const val coroutines = "1.3.0-M1"
