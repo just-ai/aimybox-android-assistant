@@ -27,17 +27,14 @@ allprojects {
         maven("https://dl.bintray.com/aimybox/aimybox-android-sdk/")
     }
 
-    if (isSubmodule) Submodules.find { it.name == name }?.let { submodule ->
+}
+
+subprojects {
+    Submodules.find { it.name == name }?.let { submodule ->
         configureAndroid(submodule)
         if (submodule.isPublication) configureBintrayPublishing(submodule.version)
     } ?: logger.warn("Submodule $name is not defined in Config.kt")
 }
-
-tasks.register("clean", Delete::class) {
-    delete(rootProject.buildDir)
-}
-
-val Project.isSubmodule get() = name != rootProject.name
 
 fun Project.configureAndroid(submodule: Submodule) {
 
@@ -214,3 +211,10 @@ fun Project.configurePublication(publicationName: String, publicationVersion: St
         }
     }
 }
+
+
+tasks.register("clean", Delete::class) {
+    delete(rootProject.buildDir)
+}
+
+val Project.isSubmodule get() = name != rootProject.name
