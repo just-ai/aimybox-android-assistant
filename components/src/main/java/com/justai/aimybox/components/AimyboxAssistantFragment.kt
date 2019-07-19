@@ -30,8 +30,9 @@ constructor() : Fragment(), CoroutineScope {
 
     private lateinit var viewModel: AimyboxAssistantViewModel
     private lateinit var recycler: RecyclerView
-    private lateinit var adapter: AimyboxAssistantAdapter
     private lateinit var aimyboxButton: AimyboxButton
+
+    private val adapter = AimyboxAssistantAdapter()
 
     private var revealTimeMs = 0L
 
@@ -61,7 +62,7 @@ constructor() : Fragment(), CoroutineScope {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         view.apply {
             recycler = findViewById(R.id.fragment_aimybox_assistant_recycler)
-            adapter = AimyboxAssistantAdapter(requireContext())
+
             recycler.adapter = adapter
 
             aimyboxButton = findViewById(R.id.fragment_aimybox_assistant_button)
@@ -84,9 +85,7 @@ constructor() : Fragment(), CoroutineScope {
             }
         })
 
-        viewModel.widgets.observe(this, Observer { data ->
-            adapter.setData(data)
-        })
+        viewModel.widgets.observe(this, Observer(adapter::setData))
     }
 
     override fun onDetach() {

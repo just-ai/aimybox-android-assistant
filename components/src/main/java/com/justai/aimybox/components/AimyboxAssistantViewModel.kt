@@ -97,7 +97,7 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
                 }
             }
             is SpeechToText.Event.SoundVolumeRmsChanged -> {
-                soundVolumeRmsMutable.value = event.rmsDb
+                soundVolumeRmsMutable.postValue(event.rmsDb)
                 L.d("Sound volume ${event.rmsDb}")
             }
         }
