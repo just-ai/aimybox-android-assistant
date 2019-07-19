@@ -6,6 +6,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.justai.aimybox.components.R
 import com.justai.aimybox.components.adapter.base.AdapterDelegate
 import com.justai.aimybox.components.extensions.inflate
@@ -15,14 +16,18 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
-object RecognitionDelegate
-    : AdapterDelegate<RecognitionWidget, RecognitionDelegate.ViewHolder>(RecognitionWidget::class.java) {
+class RecognitionDelegate(
+    private val onUpdate: () -> Unit
+) : AdapterDelegate<RecognitionWidget, RecognitionDelegate.ViewHolder>(RecognitionWidget::class.java) {
 
     override fun createViewHolder(parent: ViewGroup): ViewHolder {
-        return ViewHolder(parent.inflate(R.layout.item_recognition))
+        return ViewHolder(parent.inflate(R.layout.item_recognition), onUpdate)
     }
 
-    class ViewHolder(itemView: View) : AdapterDelegate.ViewHolder<RecognitionWidget>(itemView) {
+    class ViewHolder(
+        itemView: View,
+        private val onUpdate: () -> Unit
+    ) : AdapterDelegate.ViewHolder<RecognitionWidget>(itemView) {
         private var textView: TextView = findViewById(R.id.item_recognition_text)
         private var job: Job? = null
 
@@ -30,31 +35,34 @@ object RecognitionDelegate
         private val hypotheticalTextColor = (textColor and 0x00FFFFFF) + 0x77000000 // add small transparency
 
         override suspend fun bind(item: RecognitionWidget) {
+            job?.cancel()
+            textView.text = item.currentText
+            itemView.isVisible = item.currentText.isNotBlank()
+            if (item.textChannel.isClosedForReceive) return
+
             coroutineScope {
-                job?.cancel()
-                textView.text = item.currentText
-                if (!item.textChannel.isClosedForReceive) job = launch {
-                    item.textChannel.consumeEach { newText ->
-                        textView.text = if (item.textChannel.isClosedForSend) {
-                            newText
-                        } else {
-                            createDifferenceSpannedString(item.currentText, newText) ?: newText
-                        }
-                        item.currentText = newText
-                    }
-                }
+                job = launch { item.observeUpdates() }
             }
+        }
+
+        private suspend fun RecognitionWidget.observeUpdates() = textChannel.consumeEach { newText ->
+            textView.text = if (textChannel.isClosedForSend) {
+                newText
+            } else {
+                createDifferenceSpannedString(currentText, newText) ?: newText
+            }
+            currentText = newText
+            itemView.isVisible = currentText.isNotBlank()
+            onUpdate()
         }
 
         private fun createDifferenceSpannedString(old: String, new: String): CharSequence? {
             var differenceIndex = 0
             if (old == new) return new
 
-            for (i in 0 until new.length) {
-                if (i >= old.length || new[i] != old[i]) {
-                    differenceIndex = i
-                    break
-                }
+            for (i in 0 until new.length) if (i >= old.length || new[i] != old[i]) {
+                differenceIndex = i
+                break
             }
 
             if (differenceIndex == 0) return null

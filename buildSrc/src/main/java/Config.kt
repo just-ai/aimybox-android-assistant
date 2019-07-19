@@ -17,7 +17,7 @@ object Versions {
         const val buildInfo = "4.7.5"
     }
 
-    const val aimybox = "0.1.1"
+    const val aimybox = "0.1.2"
     const val components = "0.0.2"
 
     const val kotlin = "1.3.41"

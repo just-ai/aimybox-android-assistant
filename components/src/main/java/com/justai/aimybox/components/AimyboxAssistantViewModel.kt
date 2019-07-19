@@ -57,24 +57,14 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
     }
 
     internal fun setAssistantVisibility(isVisible: Boolean) {
-        if (isVisible) {
-            aimybox.startRecognition()
-        } else {
-            aimybox.standby()
-        }
         isAssistantVisibleInternal.postValue(isVisible)
     }
 
     fun onButtonClick() {
         if (isAssistantVisible.value != true) {
             setAssistantVisibility(true)
-        } else {
-            when (aimybox.state.valueOrNull) {
-                Aimybox.State.STANDBY -> aimybox.startRecognition()
-                else -> aimybox.standby()
-            }
-
         }
+        aimybox.toggleRecognition()
     }
 
     private fun onSpeechToTextEvent(event: SpeechToText.Event) {

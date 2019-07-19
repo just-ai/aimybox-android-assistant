@@ -8,15 +8,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
 import kotlin.coroutines.CoroutineContext
 
-abstract class DelegatedAdapter<T>(
-    private val delegates: List<AdapterDelegate<out T, *>>
-) : RecyclerView.Adapter<AdapterDelegate.ViewHolder<T>>(), CoroutineScope {
+abstract class DelegatedAdapter<T> : RecyclerView.Adapter<AdapterDelegate.ViewHolder<T>>(), CoroutineScope {
+
+    protected abstract val delegates: List<AdapterDelegate<out T, *>>
 
     final override val coroutineContext: CoroutineContext = Dispatchers.Main + Job()
 
     private var data: List<T> = emptyList()
+
+    private var recyclerReference = WeakReference<RecyclerView>(null)
+    protected val attachedRecycler: RecyclerView? get() = recyclerReference.get()
 
     override fun getItemCount() = data.size
 
@@ -47,11 +51,12 @@ abstract class DelegatedAdapter<T>(
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-
+        recyclerReference = WeakReference(recyclerView)
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         coroutineContext.cancelChildren()
+        recyclerReference = WeakReference<RecyclerView>(null)
     }
 
 }
