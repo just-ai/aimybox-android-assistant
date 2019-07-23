@@ -85,6 +85,12 @@ abstract class AimyboxAssistantFragment
         })
 
         viewModel.widgets.observe(this, Observer(adapter::setData))
+
+        viewModel.soundVolumeRms.observe(this, Observer { volume ->
+            if (::aimyboxButton.isInitialized) {
+                aimyboxButton.onRecordingVolumeChanged(volume)
+            }
+        })
     }
 
     override fun onDetach() {

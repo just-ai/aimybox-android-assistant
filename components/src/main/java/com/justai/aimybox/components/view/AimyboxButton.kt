@@ -18,8 +18,10 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.justai.aimybox.components.L
 import com.justai.aimybox.components.R
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -52,6 +54,18 @@ internal class AimyboxButton @JvmOverloads constructor(
 
     private var inkAnimator: ViewPropertyAnimator? = null
     private var recordingAnimator: ValueAnimator? = null
+    /**
+     * The flag is automatically set to true when [onRecordingVolumeChanged] is called.
+     * If the flag is false, then default simple repeating recording animation will be played during recording.
+     * */
+    private var isVolumeInformationAvailable: Boolean = false
+    private var maxSoundVolume: Float = Float.MIN_VALUE
+    private var minSoundVolume: Float = Float.MAX_VALUE
+    /**
+     * This value will be calculated based on sound volume samples interval, no need to set it manually
+     * */
+    private var soundVolumeAnimationDuration = 50L
+    private var lastVolumeSampleTime: Long? = null
 
     init {
         context.withStyledAttributes(
@@ -102,7 +116,6 @@ internal class AimyboxButton @JvmOverloads constructor(
 
         setButtonColor(buttonExtendedColor)
 
-
         val targetScale = inkViewRadiusExpanded / inkViewRadiusCollapsed
 
         inkAnimator = inkView.startInkAnimation(targetScale, duration) {
@@ -129,33 +142,71 @@ internal class AimyboxButton @JvmOverloads constructor(
 
         isExpanded = false
     }
+;
+    fun onRecordingStopped() {
+        recordingAnimator?.cancel()
+        setRecordingViewScale(1F)
+    }
 
     fun onRecordingStarted() {
         recordingAnimator?.cancel()
-        recordingAnimator = recordingView.startRecordingAnimation()
+        if (!isVolumeInformationAvailable) {
+            recordingAnimator = startSimpleRecordingAnimation()
+        }
     }
 
-    fun onRecordingStopped() {
+    fun onRecordingVolumeChanged(volume: Float) {
         recordingAnimator?.cancel()
-        recordingView.scaleX = 1F
-        recordingView.scaleY = 1F
+        isVolumeInformationAvailable = true
+
+        maxSoundVolume = max(maxSoundVolume, volume)
+        minSoundVolume = min(minSoundVolume, volume)
+
+        val currentTime = System.currentTimeMillis()
+
+        lastVolumeSampleTime?.let {
+            soundVolumeAnimationDuration = currentTime - it
+        }
+        lastVolumeSampleTime = currentTime
+
+        val soundInterval = maxSoundVolume - minSoundVolume
+
+        // From 0 to 1
+        val soundVolumeRelative = if (soundInterval == 0F) {
+            0F
+        } else {
+            (volume - minSoundVolume) / soundInterval
+        }
+
+        val scale = soundVolumeRelative + 1F
+
+        recordingAnimator = smoothSetRecordingViewScale(recordingView.scaleX, scale)
     }
 
     private fun setButtonColor(color: Int) {
         actionButton.backgroundTintList = ColorStateList.valueOf(color)
     }
 
-    private fun View.startRecordingAnimation() = ValueAnimator().apply {
+    private fun setRecordingViewScale(scale: Float) = recordingView.apply {
+        pivotX = width / 2F
+        pivotY = height / 2F
+        scaleX = scale
+        scaleY = scale
+    }
+
+    private fun smoothSetRecordingViewScale(fromScale: Float, toScale: Float) = ValueAnimator().apply {
+        setFloatValues(fromScale, toScale)
+        duration = soundVolumeAnimationDuration
+        addUpdateListener { animator -> setRecordingViewScale(animator.animatedValue as Float) }
+        start()
+    }
+
+    private fun startSimpleRecordingAnimation() = ValueAnimator().apply {
         repeatCount = ValueAnimator.INFINITE
         repeatMode = ValueAnimator.REVERSE
         setFloatValues(1F, 2F)
         duration = 500
-        pivotX = width / 2F
-        pivotY = height / 2F
-        addUpdateListener { animator ->
-            scaleX = animator.animatedValue as Float
-            scaleY = animator.animatedValue as Float
-        }
+        addUpdateListener { animator -> setRecordingViewScale(animator.animatedValue as Float) }
         start()
     }
 
