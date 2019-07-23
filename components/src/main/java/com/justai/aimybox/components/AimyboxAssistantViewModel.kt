@@ -1,6 +1,7 @@
 package com.justai.aimybox.components
 
 import androidx.annotation.CallSuper
+import androidx.annotation.RequiresPermission
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -61,6 +62,7 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
         aimybox.standby()
     }
 
+    @RequiresPermission("android.permission.RECORD_AUDIO")
     fun onButtonClick() {
         if (isAssistantVisible.value != true) {
             isAssistantVisibleInternal.postValue(true)

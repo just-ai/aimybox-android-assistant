@@ -1,4 +1,4 @@
-package com.justai.aimybox.components.adapter.base
+package com.justai.aimybox.components.base
 
 import android.view.View
 import android.view.ViewGroup

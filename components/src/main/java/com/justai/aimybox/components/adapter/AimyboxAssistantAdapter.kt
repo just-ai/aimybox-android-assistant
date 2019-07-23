@@ -1,6 +1,6 @@
 package com.justai.aimybox.components.adapter
 
-import com.justai.aimybox.components.adapter.base.DelegatedAdapter
+import com.justai.aimybox.components.base.DelegatedAdapter
 import com.justai.aimybox.components.widget.AssistantWidget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

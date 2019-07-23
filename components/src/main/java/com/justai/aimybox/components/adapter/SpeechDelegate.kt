@@ -4,11 +4,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.justai.aimybox.components.R
-import com.justai.aimybox.components.adapter.base.AdapterDelegate
+import com.justai.aimybox.components.base.AdapterDelegate
 import com.justai.aimybox.components.extensions.inflate
 import com.justai.aimybox.components.widget.SpeechWidget
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch

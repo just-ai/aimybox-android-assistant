@@ -1,4 +1,4 @@
-package com.justai.aimybox.components.adapter.base
+package com.justai.aimybox.components.base
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
