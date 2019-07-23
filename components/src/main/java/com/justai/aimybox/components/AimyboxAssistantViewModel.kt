@@ -56,13 +56,14 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
         }
     }
 
-    internal fun setAssistantVisibility(isVisible: Boolean) {
-        isAssistantVisibleInternal.postValue(isVisible)
+    fun onBackPressed() {
+        isAssistantVisibleInternal.postValue(false)
+        aimybox.standby()
     }
 
     fun onButtonClick() {
         if (isAssistantVisible.value != true) {
-            setAssistantVisibility(true)
+            isAssistantVisibleInternal.postValue(true)
         }
         aimybox.toggleRecognition()
     }
@@ -88,7 +89,6 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
             }
             is SpeechToText.Event.SoundVolumeRmsChanged -> {
                 soundVolumeRmsMutable.postValue(event.rmsDb)
-                L.d("Sound volume ${event.rmsDb}")
             }
         }
     }

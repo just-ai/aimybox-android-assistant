@@ -23,8 +23,7 @@ import kotlin.coroutines.CoroutineContext
 
 
 abstract class AimyboxAssistantFragment
-@RequiresPermission(android.Manifest.permission.RECORD_AUDIO)
-constructor() : Fragment(), CoroutineScope {
+@RequiresPermission(android.Manifest.permission.RECORD_AUDIO) constructor() : Fragment(), CoroutineScope {
 
     override val coroutineContext: CoroutineContext = Dispatchers.Main + Job()
 
@@ -38,7 +37,7 @@ constructor() : Fragment(), CoroutineScope {
 
     private val onBackPressedCallback = OnBackPressedCallback {
         val isVisible = viewModel.isAssistantVisible.value ?: false
-        if (isVisible) viewModel.setAssistantVisibility(false)
+        if (isVisible) viewModel.onBackPressed()
         isVisible
     }
 
