@@ -10,8 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.CallSuper
-import androidx.annotation.RequiresPermission
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
@@ -112,11 +110,16 @@ abstract class AimyboxAssistantFragment : Fragment(), CoroutineScope {
 
     @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == REQUEST_PERMISSION_CODE
-            && permissions.firstOrNull() == Manifest.permission.RECORD_AUDIO
-            && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
-        ) {
-            viewModel.onButtonClick()
+        if (requestCode == REQUEST_PERMISSION_CODE && permissions.firstOrNull() == Manifest.permission.RECORD_AUDIO) {
+            if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
+                viewModel.onButtonClick()
+            } else {
+                requireActivity().supportFragmentManager.beginTransaction().apply {
+                    add(R.id.fragment_aimybox_container, MicrophonePermissionFragment())
+                    addToBackStack(null)
+                    commit()
+                }
+            }
         }
     }
 

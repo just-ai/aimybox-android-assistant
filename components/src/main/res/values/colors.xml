@@ -4,4 +4,5 @@
     <color name="white">#FFFFFF</color>
     <color name="text">@color/white</color>
     <color name="recording">#99FFFFFF</color>
+    <color name="button_text">@color/text</color>
 </resources>

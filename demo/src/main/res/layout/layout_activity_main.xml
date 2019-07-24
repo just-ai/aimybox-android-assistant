@@ -9,8 +9,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textSize="32sp"
-        android:text="Hello world!"/>
+        android:text="Hello world!"
+        android:textSize="32sp" />
 
     <FrameLayout
         android:id="@+id/assistant_container"
