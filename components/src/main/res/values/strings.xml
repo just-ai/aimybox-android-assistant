@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="require_mic_access">Voice Assistant requires microphone access to work.\nPlease, grant the permission to the app.</string>
+    <string name="grant_permission">Grant</string>
+    <string name="cancel">Cancel</string>
+</resources>

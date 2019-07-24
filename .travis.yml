@@ -13,10 +13,6 @@ install:
 script:
   - ./gradlew clean assembleDebug assembleRelease
 
-branches:
-  except:
-    - gh-pages
-
 sudo: false
 
 before_cache:
@@ -34,3 +30,5 @@ android:
     - tools
     - platform-tools
     - build-tools-29.0.1
+      
+dist : trusty

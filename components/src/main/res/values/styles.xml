@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="BaseAssistantTheme">
+    <style name="BaseAssistantTheme" parent="Theme.MaterialComponents.Light">
         <item name="background_color">@color/primary</item>
+        <item name="recording_color">@color/recording</item>
         <item name="button_extended_color">@color/white</item>
         <item name="button_collapsed_color">@color/primary</item>
         <item name="button_size">56dp</item>

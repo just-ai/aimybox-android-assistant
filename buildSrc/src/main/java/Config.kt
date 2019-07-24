@@ -17,10 +17,10 @@ object Versions {
         const val buildInfo = "4.7.5"
     }
 
-    const val aimybox = "0.1.1"
+    const val aimybox = "0.1.2"
     const val components = "0.0.2"
 
-    const val kotlin = "1.3.40"
+    const val kotlin = "1.3.41"
     const val coroutines = "1.3.0-M1"
 
     const val appCompat = "1.0.2"
@@ -31,9 +31,9 @@ object Versions {
 
     const val glide = "4.9.0"
 
-    const val retrofit = "2.5.0"
-    const val okHttp = "3.14.1"
     const val kotson = "2.5.0"
+
+    const val kodein = "6.3.2"
 
     const val mockk = "1.9"
     const val androidxTest = "1.1.1"
@@ -55,6 +55,8 @@ object Libraries {
         val coroutinesAndroid = kotlinx("coroutines-android", Versions.coroutines)
 
         val coroutines = listOf(coroutinesCore, coroutinesAndroid)
+
+
     }
 
     object Android {
@@ -69,6 +71,11 @@ object Libraries {
         val glideCompiler = "com.github.bumptech.glide:compiler" version Versions.glide
 
         val kotson = "com.github.salomonbrys.kotson:kotson" version Versions.kotson
+
+        val kodeinDi = "org.kodein.di:kodein-di-generic-jvm" version Versions.kodein
+        val kodeinFramework = "org.kodein.di:kodein-di-framework-android-x" version Versions.kodein
+
+        val kodein = listOf(kodeinDi, kodeinFramework)
     }
 
 

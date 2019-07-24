@@ -1,13 +1,14 @@
 package com.justai.aimybox.components
 
 import androidx.annotation.CallSuper
+import androidx.annotation.RequiresPermission
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.justai.aimybox.Aimybox
-import com.justai.aimybox.components.widgets.AssistantWidget
-import com.justai.aimybox.components.widgets.RecognitionWidget
-import com.justai.aimybox.components.widgets.SpeechWidget
+import com.justai.aimybox.components.widget.AssistantWidget
+import com.justai.aimybox.components.widget.RecognitionWidget
+import com.justai.aimybox.components.widget.SpeechWidget
 import com.justai.aimybox.model.TextSpeech
 import com.justai.aimybox.speechtotext.SpeechToText
 import com.justai.aimybox.texttospeech.TextToSpeech
@@ -18,17 +19,14 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
 import kotlin.coroutines.CoroutineContext
 
-abstract class AimyboxAssistantViewModel : ViewModel(), CoroutineScope {
+open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), CoroutineScope {
 
     override val coroutineContext: CoroutineContext = Dispatchers.IO + Job()
-    abstract val aimybox: Aimybox
 
     private val isAssistantVisibleInternal = MutableLiveData<Boolean>()
     val isAssistantVisible = isAssistantVisibleInternal.immutable()
@@ -36,50 +34,43 @@ abstract class AimyboxAssistantViewModel : ViewModel(), CoroutineScope {
     private val widgetsInternal = MutableLiveData<List<AssistantWidget>>()
     val widgets = widgetsInternal.immutable()
 
-    internal fun setAssistantVisibility(isVisible: Boolean) {
-        if (isVisible) {
-            L.d("START")
-            aimybox.startRecognition()
-        } else {
-            aimybox.standby()
-        }
-        isAssistantVisibleInternal.postValue(isVisible)
-    }
+    val aimyboxState = aimybox.state.toLiveData()
 
-    fun start() {
+    private val soundVolumeRmsMutable = MutableLiveData<Float>()
+    val soundVolumeRms: LiveData<Float> = soundVolumeRmsMutable
+
+    init {
         launch {
             aimybox.exceptions.observe(L::e)
         }
 
-        val stt = aimybox.speechToTextEvents.openSubscription()
-        val tts = aimybox.textToSpeechEvents.openSubscription()
+        val speechToText = aimybox.speechToTextEvents.openSubscription()
+        val textToSpeech = aimybox.textToSpeechEvents.openSubscription()
 
         launch {
             while (isActive) select<Unit> {
-                stt.onReceive { onSpeechToTextEvent(it) }
-                tts.onReceive { onTextToSpeechEvent(it) }
-                L.d(widgets.value?.size.toString())
+                speechToText.onReceive { onSpeechToTextEvent(it) }
+                textToSpeech.onReceive { onTextToSpeechEvent(it) }
             }
         }.invokeOnCompletion {
-            listOf(tts, stt).forEach { it.cancel() }
+            listOf(textToSpeech, speechToText).forEach { it.cancel() }
         }
-
     }
 
+    fun onBackPressed() {
+        isAssistantVisibleInternal.postValue(false)
+        aimybox.standby()
+    }
+
+    @RequiresPermission("android.permission.RECORD_AUDIO")
     fun onButtonClick() {
         if (isAssistantVisible.value != true) {
-            setAssistantVisibility(true)
-        } else {
-            when (aimybox.state.valueOrNull) {
-                Aimybox.State.STANDBY -> aimybox.startRecognition()
-                else -> aimybox.standby()
-            }
-
+            isAssistantVisibleInternal.postValue(true)
         }
+        aimybox.toggleRecognition()
     }
 
     private fun onSpeechToTextEvent(event: SpeechToText.Event) {
-        L.d(event.toString())
         val currentList = widgets.value
         val lastWidget = currentList?.findLast { it is RecognitionWidget } as? RecognitionWidget
         when (event) {
@@ -98,11 +89,13 @@ abstract class AimyboxAssistantViewModel : ViewModel(), CoroutineScope {
                     widgetsInternal.postValue(currentList.dropLast(1))
                 }
             }
+            is SpeechToText.Event.SoundVolumeRmsChanged -> {
+                soundVolumeRmsMutable.postValue(event.rmsDb)
+            }
         }
     }
 
     private fun onTextToSpeechEvent(event: TextToSpeech.Event) {
-        L.d(event.toString())
         val currentList = widgets.value
         val lastWidget = currentList?.findLast { it is SpeechWidget } as SpeechWidget?
         when (event) {
@@ -143,4 +136,5 @@ abstract class AimyboxAssistantViewModel : ViewModel(), CoroutineScope {
 
     private fun <T> SendChannel<T>.safeOffer(value: T) =
         takeUnless(SendChannel<T>::isClosedForSend)?.offer(value) ?: false
+
 }
