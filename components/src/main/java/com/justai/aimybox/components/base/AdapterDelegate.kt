@@ -27,8 +27,7 @@ abstract class AdapterDelegate<TItem, TViewHolder : AdapterDelegate.ViewHolder<T
 
         protected fun <T : View> findViewById(@IdRes id: Int) = itemView.findViewById<T>(id)!!
 
-        protected fun getColor(@ColorRes id: Int) =
-            ContextCompat.getColor(itemView.context, R.color.text)
+        protected fun getColor(@ColorRes id: Int) = ContextCompat.getColor(itemView.context, id)
 
     }
 
