@@ -5,6 +5,7 @@ import androidx.annotation.RequiresPermission
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.justai.aimybox.Aimybox
 import com.justai.aimybox.components.widget.AssistantWidget
 import com.justai.aimybox.components.widget.RecognitionWidget
@@ -13,8 +14,7 @@ import com.justai.aimybox.model.TextSpeech
 import com.justai.aimybox.speechtotext.SpeechToText
 import com.justai.aimybox.texttospeech.TextToSpeech
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.SendChannel
@@ -22,11 +22,11 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
-import kotlin.coroutines.CoroutineContext
 
-open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), CoroutineScope {
-
-    override val coroutineContext: CoroutineContext = Dispatchers.IO + Job()
+/**
+ * Aimybox Fragment's view model.
+ * */
+open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), CoroutineScope by MainScope(){
 
     private val isAssistantVisibleInternal = MutableLiveData<Boolean>()
     val isAssistantVisible = isAssistantVisibleInternal.immutable()
@@ -114,7 +114,6 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
         }
     }
 
-
     @CallSuper
     override fun onCleared() {
         super.onCleared()
@@ -137,4 +136,21 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
     private fun <T> SendChannel<T>.safeOffer(value: T) =
         takeUnless(SendChannel<T>::isClosedForSend)?.offer(value) ?: false
 
+    class Factory private constructor(private val aimybox: Aimybox) : ViewModelProvider.Factory {
+
+        companion object {
+            private lateinit var instance: Factory
+            fun getInstance(aimybox: Aimybox) = instance.also {
+                if (!::instance.isInitialized) { instance = Factory(aimybox) }
+            }
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            require(AimyboxAssistantViewModel::class.java.isAssignableFrom(modelClass)) { "$modelClass is not a subclass of AimyboxAssistantViewModel" }
+            require(modelClass.constructors.size == 1) { "AimyboxAssistantViewModel must have only one constructor" }
+            val constructor = checkNotNull(modelClass.constructors[0])
+            return constructor.newInstance(aimybox) as T
+        }
+    }
 }

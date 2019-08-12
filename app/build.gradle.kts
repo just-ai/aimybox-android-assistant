@@ -52,10 +52,11 @@ repositories {
 dependencies {
 
     implementation("androidx.appcompat:appcompat:1.0.2")
+    implementation("androidx.recyclerview:recyclerview:1.0.0")
     implementation("androidx.constraintlayout:constraintlayout:1.1.3")
-    implementation("androidx.core:core-ktx:1.2.0-alpha03")
-    implementation("com.google.android.material:material:1.1.0-alpha09")
+    implementation("androidx.core:core-ktx:1.0.2")
     implementation("androidx.lifecycle:lifecycle-extensions:2.0.0")
+
 
     implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M1")
@@ -63,7 +64,7 @@ dependencies {
 
     val aimyboxVersion: String by rootProject.extra
 
-    implementation("com.justai.aimybox:components:0.0.3")
+    implementation(project(":components"))
     implementation("com.justai.aimybox:core:$aimyboxVersion")
     implementation("com.justai.aimybox:google-platform-speechkit:$aimyboxVersion")
 }

@@ -8,10 +8,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import com.justai.aimybox.Aimybox
 import com.justai.aimybox.components.adapter.AimyboxAssistantAdapter
@@ -25,7 +25,7 @@ import kotlinx.coroutines.cancelChildren
 import kotlin.coroutines.CoroutineContext
 
 
-abstract class AimyboxAssistantFragment : Fragment(), CoroutineScope {
+class AimyboxAssistantFragment : Fragment(), CoroutineScope {
 
     companion object {
         private const val REQUEST_PERMISSION_CODE = 100
@@ -41,27 +41,23 @@ abstract class AimyboxAssistantFragment : Fragment(), CoroutineScope {
 
     private var revealTimeMs = 0L
 
-    private val onBackPressedCallback = OnBackPressedCallback {
-        val isVisible = viewModel.isAssistantVisible.value ?: false
-        if (isVisible) viewModel.onBackPressed()
-        isVisible
-    }
-
-    abstract fun getAimyboxViewModel(): AimyboxAssistantViewModel
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
+        val aimyboxProvider = requireNotNull(findAimyboxProvider()) {
+            "Parent Activity or Application must implement AimyboxProvider interface"
+        }
+
         if (!::viewModel.isInitialized) {
-            viewModel = getAimyboxViewModel()
+            viewModel = ViewModelProviders.of(requireActivity(), aimyboxProvider.getViewModelFactory())
+                .get(AimyboxAssistantViewModel::class.java)
         }
         onViewModelInitialized(viewModel)
 
         revealTimeMs = context.resources.getInteger(R.integer.assistant_reveal_time_ms).toLong()
-
-        requireActivity().addOnBackPressedCallback(onBackPressedCallback)
     }
 
-    final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         inflater.inflate(R.layout.fragment_aimybox_assistant, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -76,7 +72,7 @@ abstract class AimyboxAssistantFragment : Fragment(), CoroutineScope {
     }
 
     @CallSuper
-    open fun onViewModelInitialized(viewModel: AimyboxAssistantViewModel) {
+    fun onViewModelInitialized(viewModel: AimyboxAssistantViewModel) {
         viewModel.isAssistantVisible.observe(this, Observer { isVisible ->
             coroutineContext.cancelChildren()
             if (isVisible) aimyboxButton.expand() else aimyboxButton.collapse()
@@ -123,13 +119,34 @@ abstract class AimyboxAssistantFragment : Fragment(), CoroutineScope {
         }
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        requireActivity().removeOnBackPressedCallback(onBackPressedCallback)
+    /**
+     * Back press handler. Add this method invocation in your activity to make back pressed behavior correct.
+     *
+     * For example:
+     * ```
+     * override fun onBackPressed() {
+     *     if (!assistantFragment.onBackPressed()) super.onBackPressed()
+     * }
+     * ```
+     * */
+    fun onBackPressed(): Boolean {
+        val isVisible = viewModel.isAssistantVisible.value ?: false
+        if (isVisible) viewModel.onBackPressed()
+        return isVisible
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         coroutineContext.cancel()
+    }
+
+    private fun findAimyboxProvider(): AimyboxProvider? {
+        val activity = requireActivity()
+        val application = activity.application
+        return when {
+            activity is AimyboxProvider -> activity
+            application is AimyboxProvider -> application
+            else -> null
+        }
     }
 }

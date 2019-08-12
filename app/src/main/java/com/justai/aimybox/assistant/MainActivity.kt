@@ -2,29 +2,26 @@ package com.justai.aimybox.assistant
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProviders
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
-import org.kodein.di.generic.instance
+import com.justai.aimybox.components.AimyboxAssistantFragment
 
-class MainActivity : AppCompatActivity(), KodeinAware {
-    override val kodein: Kodein by closestKodein()
-
-    private lateinit var viewModel: MainViewModel
-    private val viewModelFactory: KodeinViewModelFactory by instance()
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_activity_main)
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
-
-        val assistantFragment = AssistantDialogFragmentImpl()
+        val assistantFragment = AimyboxAssistantFragment()
 
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.assistant_container, assistantFragment)
             commit()
         }
     }
+
+    override fun onBackPressed() {
+        val assistantFragment = (supportFragmentManager.findFragmentById(R.id.assistant_container)
+                as? AimyboxAssistantFragment)
+        if (assistantFragment?.onBackPressed() != true) super.onBackPressed()
+    }
+
 }
