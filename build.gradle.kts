@@ -1,7 +1,7 @@
 import com.android.build.gradle.BaseExtension
 import com.jfrog.bintray.gradle.BintrayExtension
 
-val demoAppModuleName = "demo"
+val demoAppModuleName = "app"
 
 buildscript {
     repositories {

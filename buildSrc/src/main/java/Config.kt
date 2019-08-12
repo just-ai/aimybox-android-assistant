@@ -1,5 +1,5 @@
 val Submodules = listOf(
-    Application("demo", Versions.components, false),
+    Application("app", Versions.components, false),
     Library("components", Versions.components, true)
 )
 
@@ -17,7 +17,7 @@ object Versions {
         const val buildInfo = "4.7.5"
     }
 
-    const val aimybox = "0.1.2"
+    const val aimybox = "0.1.3"
     const val components = "0.0.3"
 
     const val kotlin = "1.3.41"
