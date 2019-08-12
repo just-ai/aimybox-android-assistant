@@ -13,7 +13,7 @@ android {
         minSdkVersion(21)
         targetSdkVersion(28)
 
-        versionName = "0.4.4"
+        versionName = "0.0.4"
         versionCode = 1
     }
 
