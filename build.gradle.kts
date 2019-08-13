@@ -1,23 +1,26 @@
 import com.android.build.gradle.BaseExtension
 import com.jfrog.bintray.gradle.BintrayExtension
 
-val demoAppModuleName = "demo"
-
 buildscript {
     repositories {
         google()
         jcenter()
     }
+
     dependencies {
-        classpath(Plugins.androidGradle)
-        classpath(Plugins.kotlin)
-        classpath(Plugins.dexcount)
-        classpath(Plugins.bintray)
-        classpath(Plugins.buildInfo)
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.41")
+        classpath("com.android.tools.build:gradle:3.4.2")
+        classpath("com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6")
+        classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4")
+        classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.7.5")
     }
+
 }
 
 allprojects {
+    extra.set("kotlinVersion", "1.3.41")
+    extra.set("aimyboxVersion", "0.1.3")
+
     repositories {
         mavenLocal()
         google()
@@ -26,56 +29,18 @@ allprojects {
         maven("https://kotlin.bintray.com/kotlinx")
         maven("https://dl.bintray.com/aimybox/aimybox-android-sdk/")
     }
-
 }
 
 subprojects {
-    Submodules.find { it.name == name }?.let { submodule ->
-        configureAndroid(submodule)
-        if (submodule.isPublication) configureBintrayPublishing(submodule.version)
-    } ?: logger.warn("Submodule $name is not defined in Config.kt")
-}
-
-fun Project.configureAndroid(submodule: Submodule) {
-
-    apply(plugin = if (submodule is Library) "com.android.library" else "com.android.application")
-    apply(plugin = "kotlin-android")
-    apply(plugin = "kotlin-android-extensions")
-    apply(plugin = "com.getkeepsafe.dexcount")
-
-    configure<BaseExtension> {
-        compileSdkVersion(Versions.Sdk.compile)
-
-        defaultConfig {
-            minSdkVersion(Versions.Sdk.min)
-            targetSdkVersion(Versions.Sdk.target)
-
-            versionName = submodule.version
-            versionCode = 1
-        }
-
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_1_8
-            targetCompatibility = JavaVersion.VERSION_1_8
-        }
-
-        buildTypes {
-            getByName("debug") {
-                isMinifyEnabled = false
-            }
-            getByName("release") {
-                //TODO configure pro guard
-            }
-        }
-
-        lintOptions {
-            isCheckAllWarnings = true
-            isWarningsAsErrors = false
-            isAbortOnError = true
-        }
+    afterEvaluate {
+        listOf(
+            Application("app", "0.0.4", false),
+            Library("components", "0.0.4", true)
+        ).find { it.name == name }?.let { submodule ->
+            if (submodule.isPublication) configureBintrayPublishing(submodule.version)
+        } ?: logger.warn("Submodule $name is not defined")
     }
 }
-
 
 fun Project.configureBintrayPublishing(version: String) {
     apply(plugin = "com.jfrog.bintray")
