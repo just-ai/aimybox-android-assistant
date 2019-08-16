@@ -19,7 +19,7 @@ buildscript {
 
 allprojects {
     extra.set("kotlinVersion", "1.3.41")
-    extra.set("aimyboxVersion", "0.1.3")
+    extra.set("aimyboxVersion", "0.1.5")
 
     repositories {
         mavenLocal()
@@ -33,12 +33,7 @@ allprojects {
 
 subprojects {
     afterEvaluate {
-        listOf(
-            Application("app", "0.0.4", false),
-            Library("components", "0.0.4", true)
-        ).find { it.name == name }?.let { submodule ->
-            if (submodule.isPublication) configureBintrayPublishing(submodule.version)
-        } ?: logger.warn("Submodule $name is not defined")
+        if (name == "components") configureBintrayPublishing(version as String)
     }
 }
 
@@ -63,11 +58,11 @@ fun Project.configureBintrayPublishing(version: String) {
         pkg(closureOf<BintrayExtension.PackageConfig> {
             repo = "aimybox-android-assistant"
             name = project.name
-            userOrg = "aimybox"
+            userOrg = "just-ai"
             setLicenses("Apache-2.0")
             websiteUrl = "https://aimybox.com"
             publish = true
-            vcsUrl = "https://github.com/aimybox/aimybox-android-assistant.git"
+            vcsUrl = "https://github.com/just-ai/aimybox-android-assistant.git"
             version(closureOf<BintrayExtension.VersionConfig> {
                 name = version
             })

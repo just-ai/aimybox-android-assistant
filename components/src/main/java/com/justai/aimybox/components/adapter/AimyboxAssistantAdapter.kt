@@ -2,18 +2,23 @@ package com.justai.aimybox.components.adapter
 
 import com.justai.aimybox.components.base.DelegatedAdapter
 import com.justai.aimybox.components.widget.AssistantWidget
+import com.justai.aimybox.components.widget.Button
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class AimyboxAssistantAdapter : DelegatedAdapter<AssistantWidget>(), CoroutineScope {
+class AimyboxAssistantAdapter(
+    onButtonClick: (Button) -> Unit
+) : DelegatedAdapter<AssistantWidget>(), CoroutineScope {
 
     private var scrollJob: Job? = null
 
     override val delegates = listOf(
         RecognitionDelegate(::scrollRecyclerToBottom),
-        SpeechDelegate(::scrollRecyclerToBottom)
+        SpeechDelegate(::scrollRecyclerToBottom),
+        ImageDelegate(),
+        ButtonsDelegate(onButtonClick)
     )
 
     private fun scrollRecyclerToBottom() {

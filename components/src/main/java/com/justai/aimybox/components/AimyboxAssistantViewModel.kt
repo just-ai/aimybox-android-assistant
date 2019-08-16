@@ -7,16 +7,27 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.justai.aimybox.Aimybox
+import com.justai.aimybox.api.DialogApi
 import com.justai.aimybox.components.widget.AssistantWidget
+import com.justai.aimybox.components.widget.Button
+import com.justai.aimybox.components.widget.ButtonsWidget
+import com.justai.aimybox.components.widget.ImageWidget
+import com.justai.aimybox.components.widget.LinkButton
 import com.justai.aimybox.components.widget.RecognitionWidget
+import com.justai.aimybox.components.widget.ResponseButton
 import com.justai.aimybox.components.widget.SpeechWidget
+import com.justai.aimybox.model.Request
 import com.justai.aimybox.model.TextSpeech
+import com.justai.aimybox.model.reply.ButtonsReply
+import com.justai.aimybox.model.reply.ImageReply
 import com.justai.aimybox.speechtotext.SpeechToText
 import com.justai.aimybox.texttospeech.TextToSpeech
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.isActive
@@ -34,10 +45,13 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
     private val widgetsInternal = MutableLiveData<List<AssistantWidget>>()
     val widgets = widgetsInternal.immutable()
 
-    val aimyboxState = aimybox.state.toLiveData()
+    val aimyboxState = aimybox.stateChannel.toLiveData()
 
     private val soundVolumeRmsMutable = MutableLiveData<Float>()
     val soundVolumeRms: LiveData<Float> = soundVolumeRmsMutable
+
+    private val urlIntentsInternal = Channel<String>()
+    val urlIntents = urlIntentsInternal as ReceiveChannel<String>
 
     init {
         launch {
@@ -46,14 +60,24 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
 
         val speechToText = aimybox.speechToTextEvents.openSubscription()
         val textToSpeech = aimybox.textToSpeechEvents.openSubscription()
+        val dialogApi = aimybox.dialogApiEvents.openSubscription()
 
         launch {
             while (isActive) select<Unit> {
                 speechToText.onReceive { onSpeechToTextEvent(it) }
                 textToSpeech.onReceive { onTextToSpeechEvent(it) }
+                dialogApi.onReceive { onDialogApiEvent(it) }
             }
         }.invokeOnCompletion {
-            listOf(textToSpeech, speechToText).forEach { it.cancel() }
+            listOf(textToSpeech, speechToText, dialogApi).forEach { it.cancel() }
+        }
+    }
+
+    @RequiresPermission("android.permission.RECORD_AUDIO")
+    fun onButtonClick(button: Button) {
+        when (button) {
+            is ResponseButton -> aimybox.send(Request(button.text))
+            is LinkButton -> urlIntentsInternal.safeOffer(button.url)
         }
     }
 
@@ -63,20 +87,23 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
     }
 
     @RequiresPermission("android.permission.RECORD_AUDIO")
-    fun onButtonClick() {
+    fun onAssistantButtonClick() {
         if (isAssistantVisible.value != true) {
             isAssistantVisibleInternal.postValue(true)
         }
         aimybox.toggleRecognition()
     }
 
+    private fun addWidget(widget: AssistantWidget) {
+        val currentList = widgets.value.orEmpty()
+        widgetsInternal.postValue(currentList.plus(widget))
+    }
+
     private fun onSpeechToTextEvent(event: SpeechToText.Event) {
         val currentList = widgets.value
         val lastWidget = currentList?.findLast { it is RecognitionWidget } as? RecognitionWidget
         when (event) {
-            is SpeechToText.Event.RecognitionStarted -> {
-                widgetsInternal.postValue(currentList.orEmpty().plus(RecognitionWidget()))
-            }
+            is SpeechToText.Event.RecognitionStarted -> addWidget(RecognitionWidget())
             is SpeechToText.Event.RecognitionPartialResult -> {
                 lastWidget?.textChannel?.safeOffer(event.text?.capitalize().orEmpty())
             }
@@ -99,9 +126,7 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
         val currentList = widgets.value
         val lastWidget = currentList?.findLast { it is SpeechWidget } as SpeechWidget?
         when (event) {
-            is TextToSpeech.Event.SpeechSequenceStarted -> {
-                widgetsInternal.postValue(currentList.orEmpty().plus(SpeechWidget()))
-            }
+            is TextToSpeech.Event.SpeechSequenceStarted -> addWidget(SpeechWidget())
             is TextToSpeech.Event.SpeechStarted -> event.speech.let { speech ->
                 when (speech) {
                     is TextSpeech -> lastWidget?.textChannel?.safeOffer(speech.text)
@@ -110,6 +135,24 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
             }
             is TextToSpeech.Event.SpeechSequenceCompleted -> {
                 lastWidget?.textChannel?.close()
+            }
+        }
+    }
+
+    private fun onDialogApiEvent(event: DialogApi.Event) {
+        if (event !is DialogApi.Event.NextReply) return
+        when (val reply = event.reply) {
+            is ImageReply -> addWidget(ImageWidget(reply.url))
+            is ButtonsReply -> {
+                val buttons = reply.buttons.map { button ->
+                    val url = button.url
+                    if (url != null) {
+                        LinkButton(button.text, url)
+                    } else {
+                        ResponseButton(button.text)
+                    }
+                }
+                addWidget(ButtonsWidget(buttons))
             }
         }
     }

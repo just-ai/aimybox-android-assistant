@@ -3,7 +3,9 @@ package com.justai.aimybox.components
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,12 +18,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.justai.aimybox.Aimybox
 import com.justai.aimybox.components.adapter.AimyboxAssistantAdapter
 import com.justai.aimybox.components.extensions.isPermissionGranted
+import com.justai.aimybox.components.extensions.startActivityIfExist
 import com.justai.aimybox.components.view.AimyboxButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 
@@ -37,7 +42,7 @@ class AimyboxAssistantFragment : Fragment(), CoroutineScope {
     private lateinit var recycler: RecyclerView
     private lateinit var aimyboxButton: AimyboxButton
 
-    private val adapter = AimyboxAssistantAdapter()
+    private val adapter = AimyboxAssistantAdapter(viewModel::onButtonClick)
 
     private var revealTimeMs = 0L
 
@@ -93,12 +98,18 @@ class AimyboxAssistantFragment : Fragment(), CoroutineScope {
                 aimyboxButton.onRecordingVolumeChanged(volume)
             }
         })
+
+        launch {
+            viewModel.urlIntents.consumeEach { url ->
+                context?.startActivityIfExist(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+            }
+        }
     }
 
     @SuppressLint("MissingPermission")
     private fun onAimyboxButtonClick(view: View) {
         if (requireContext().isPermissionGranted(Manifest.permission.RECORD_AUDIO)) {
-            viewModel.onButtonClick()
+            viewModel.onAssistantButtonClick()
         } else {
             requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_PERMISSION_CODE)
         }
@@ -108,7 +119,7 @@ class AimyboxAssistantFragment : Fragment(), CoroutineScope {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == REQUEST_PERMISSION_CODE && permissions.firstOrNull() == Manifest.permission.RECORD_AUDIO) {
             if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
-                viewModel.onButtonClick()
+                viewModel.onAssistantButtonClick()
             } else {
                 requireActivity().supportFragmentManager.beginTransaction().apply {
                     add(R.id.fragment_aimybox_container, MicrophonePermissionFragment())
