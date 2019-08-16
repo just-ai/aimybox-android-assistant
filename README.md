@@ -50,8 +50,8 @@ This repository contains all you need to embed intelligent voice assistant into 
     }
 ```
 
-Please refer to the [demo](https://github.com/aimybox/aimybox-android-assistant/tree/master/demo) to see how to use Aimybox library in your own project.
+Please refer to the [demo app](https://github.com/just-ai/aimybox-android-assistant/tree/master/app) to see how to use Aimybox library in your own project.
 
 # Documentation
 
-There is a full Aimybox documentation available [here](https://help.aimybox.com)
+There is a full Aimybox documentation available [here](https://help.aimybox.com). It's better to start with our [Quick Start](https://help.aimybox.com/en/article/quick-start-s9rswy/) to make first steps with Aimybox.
