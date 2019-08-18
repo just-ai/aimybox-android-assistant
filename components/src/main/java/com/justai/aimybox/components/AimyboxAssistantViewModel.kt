@@ -140,8 +140,9 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
 
         companion object {
             private lateinit var instance: Factory
-            fun getInstance(aimybox: Aimybox) = instance.also {
-                if (!::instance.isInitialized) { instance = Factory(aimybox) }
+            fun getInstance(aimybox: Aimybox): Factory {
+                if (!::instance.isInitialized) instance = Factory(aimybox)
+                return instance
             }
         }
 
