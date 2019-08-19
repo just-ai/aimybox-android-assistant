@@ -23,6 +23,7 @@ import com.justai.aimybox.model.reply.ImageReply
 import com.justai.aimybox.speechtotext.SpeechToText
 import com.justai.aimybox.texttospeech.TextToSpeech
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -33,6 +34,7 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
+import kotlinx.coroutines.withContext
 
 /**
  * Aimybox Fragment's view model.
@@ -95,8 +97,9 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
     }
 
     private fun addWidget(widget: AssistantWidget) {
+        L.d("Adding widget $widget")
         val currentList = widgets.value.orEmpty()
-        widgetsInternal.postValue(currentList.plus(widget))
+        widgetsInternal.value = currentList.plus(widget)
     }
 
     private fun onSpeechToTextEvent(event: SpeechToText.Event) {
@@ -113,7 +116,7 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
             }
             is SpeechToText.Event.EmptyRecognitionResult, SpeechToText.Event.RecognitionCancelled -> {
                 if (lastWidget is RecognitionWidget && !lastWidget.textChannel.isClosedForSend) {
-                    widgetsInternal.postValue(currentList.dropLast(1))
+                    widgetsInternal.value = currentList.dropLast(1)
                 }
             }
             is SpeechToText.Event.SoundVolumeRmsChanged -> {

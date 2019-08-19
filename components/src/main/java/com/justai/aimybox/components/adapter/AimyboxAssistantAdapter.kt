@@ -21,6 +21,10 @@ class AimyboxAssistantAdapter(
         ButtonsDelegate(onButtonClick)
     )
 
+    override fun onDataSetChanged(data: List<AssistantWidget>) {
+        scrollRecyclerToBottom()
+    }
+
     private fun scrollRecyclerToBottom() {
         attachedRecycler?.let { recyclerView ->
             val itemCount = recyclerView.layoutManager?.itemCount ?: 0

@@ -2,6 +2,7 @@ package com.justai.aimybox.components.base
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.justai.aimybox.components.L
 import com.justai.aimybox.extensions.className
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +25,10 @@ abstract class DelegatedAdapter<T> : RecyclerView.Adapter<AdapterDelegate.ViewHo
 
     override fun getItemCount() = data.size
 
+    open fun onDataSetChanged(data: List<T>) {}
+
     fun setData(newData: List<T>) {
+        L.d("Data updated:\n${newData.joinToString("\n")}")
         data = newData
         notifyDataSetChanged()
     }
