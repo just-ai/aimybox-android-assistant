@@ -23,7 +23,6 @@ import com.justai.aimybox.model.reply.ImageReply
 import com.justai.aimybox.speechtotext.SpeechToText
 import com.justai.aimybox.texttospeech.TextToSpeech
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BroadcastChannel
@@ -31,10 +30,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.selects.select
-import kotlinx.coroutines.withContext
 
 /**
  * Aimybox Fragment's view model.
@@ -56,27 +52,28 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
     val urlIntents = urlIntentsInternal as ReceiveChannel<String>
 
     init {
-        launch {
-            aimybox.exceptions.observe(L::e)
-        }
+        aimybox.exceptions.observe { L.e(it) }
 
-        val speechToText = aimybox.speechToTextEvents.openSubscription()
-        val textToSpeech = aimybox.textToSpeechEvents.openSubscription()
-        val dialogApi = aimybox.dialogApiEvents.openSubscription()
+        val events = Channel<Any>(Channel.UNLIMITED)
+
+        aimybox.speechToTextEvents.observe { events.send(it) }
+        aimybox.textToSpeechEvents.observe { events.send(it) }
+        aimybox.dialogApiEvents.observe { events.send(it) }
 
         launch {
-            while (isActive) select<Unit> {
-                speechToText.onReceive { onSpeechToTextEvent(it) }
-                textToSpeech.onReceive { onTextToSpeechEvent(it) }
-                dialogApi.onReceive { onDialogApiEvent(it) }
+            events.consumeEach {
+                when (it) {
+                    is SpeechToText.Event -> onSpeechToTextEvent(it)
+                    is TextToSpeech.Event -> onTextToSpeechEvent(it)
+                    is DialogApi.Event -> onDialogApiEvent(it)
+                }
             }
-        }.invokeOnCompletion {
-            listOf(textToSpeech, speechToText, dialogApi).forEach { it.cancel() }
         }
     }
 
     @RequiresPermission("android.permission.RECORD_AUDIO")
     fun onButtonClick(button: Button) {
+        aimybox.stopRecognition()
         when (button) {
             is ResponseButton -> aimybox.send(Request(button.text))
             is LinkButton -> urlIntentsInternal.safeOffer(button.url)
@@ -166,15 +163,15 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
         coroutineContext.cancel()
     }
 
-    private fun <T> BroadcastChannel<T>.observe(action: (T) -> Unit) {
+    private fun <T> BroadcastChannel<T>.observe(action: suspend (T) -> Unit) {
         val channel = openSubscription()
         launch {
-            channel.consumeEach(action)
+            channel.consumeEach { action(it) }
         }.invokeOnCompletion { channel.cancel() }
     }
 
     private fun <T> BroadcastChannel<T>.toLiveData(): LiveData<T> = MutableLiveData<T>().apply {
-        observe(::postValue)
+        observe { postValue(it) }
     }
 
     private fun <T> MutableLiveData<T>.immutable() = this as LiveData<T>

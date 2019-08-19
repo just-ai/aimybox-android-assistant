@@ -12,14 +12,15 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewPropertyAnimator
 import android.widget.FrameLayout
+import androidx.core.animation.doOnCancel
 import androidx.core.content.withStyledAttributes
 import androidx.core.view.children
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.justai.aimybox.components.L
 import com.justai.aimybox.components.R
+import com.justai.aimybox.components.extensions.dpToPx
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
@@ -30,6 +31,10 @@ internal class AimyboxButton @JvmOverloads constructor(
     attrs: AttributeSet?,
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
+
+    companion object {
+        private const val RECORDING_VIEW_ELEVATION_DP = 5
+    }
 
     private var isExpanded: Boolean = false
 
@@ -42,6 +47,8 @@ internal class AimyboxButton @JvmOverloads constructor(
 
     private var buttonExtendedColor: Int = Color.TRANSPARENT
     private var buttonCollapsedColor: Int = Color.TRANSPARENT
+    private var buttonDrawableExtendedColor: Int = Color.TRANSPARENT
+    private var buttonDrawableCollapsedColor: Int = Color.TRANSPARENT
 
     private var buttonSize: Float = 0F
     private var buttonMarginStart: Int = 0
@@ -86,6 +93,12 @@ internal class AimyboxButton @JvmOverloads constructor(
                 getColor(R.styleable.AimyboxButton_button_extended_color, Color.TRANSPARENT)
             buttonCollapsedColor =
                 getColor(R.styleable.AimyboxButton_button_collapsed_color, Color.TRANSPARENT)
+
+            buttonDrawableExtendedColor =
+                getColor(R.styleable.AimyboxButton_button_drawable_extended_color, Color.TRANSPARENT)
+            buttonDrawableCollapsedColor =
+                getColor(R.styleable.AimyboxButton_button_drawable_collapsed_color, Color.TRANSPARENT)
+
             buttonSize = getDimension(R.styleable.AimyboxButton_button_size, 0F)
             buttonMarginStart = getDimension(R.styleable.AimyboxButton_button_margin_start, 0F).toInt()
             buttonMarginEnd = getDimension(R.styleable.AimyboxButton_button_margin_end, 0F).toInt()
@@ -96,10 +109,13 @@ internal class AimyboxButton @JvmOverloads constructor(
                 Gravity.BOTTOM or Gravity.END
             )
 
-            setButtonColor(buttonCollapsedColor)
+            setButtonColors(false)
             actionButton.setImageDrawable(getDrawable(R.styleable.AimyboxButton_image_start))
             actionButton.customSize = buttonSize.toInt()
         }
+
+        recordingView.elevation = RECORDING_VIEW_ELEVATION_DP.dpToPx(context)
+        recordingView.outlineProvider = null
 
         addView(inkView)
         addView(recordingView)
@@ -114,7 +130,7 @@ internal class AimyboxButton @JvmOverloads constructor(
         inkView.isVisible = true
         recordingView.isVisible = true
 
-        setButtonColor(buttonExtendedColor)
+        setButtonColors(true)
 
         val targetScale = inkViewRadiusExpanded / inkViewRadiusCollapsed
 
@@ -136,7 +152,7 @@ internal class AimyboxButton @JvmOverloads constructor(
         contentViews.forEach { it.isVisible = false }
 
         inkAnimator = inkView.startInkAnimation(1.0F, duration) {
-            setButtonColor(buttonCollapsedColor)
+            setButtonColors(false)
             inkView.isInvisible = true
         }
 
@@ -183,8 +199,11 @@ internal class AimyboxButton @JvmOverloads constructor(
         recordingAnimator = smoothSetRecordingViewScale(recordingView.scaleX, scale)
     }
 
-    private fun setButtonColor(color: Int) {
-        actionButton.backgroundTintList = ColorStateList.valueOf(color)
+    private fun setButtonColors(extended: Boolean) {
+        actionButton.backgroundTintList = ColorStateList
+            .valueOf(if (extended) buttonExtendedColor else buttonCollapsedColor)
+        actionButton.imageTintList = ColorStateList
+            .valueOf(if (extended) buttonDrawableExtendedColor else buttonDrawableCollapsedColor)
     }
 
     private fun setRecordingViewScale(scale: Float) = recordingView.apply {
@@ -207,6 +226,7 @@ internal class AimyboxButton @JvmOverloads constructor(
         setFloatValues(1F, 2F)
         duration = 500
         addUpdateListener { animator -> setRecordingViewScale(animator.animatedValue as Float) }
+        doOnCancel { setRecordingViewScale(1F) }
         start()
     }
 

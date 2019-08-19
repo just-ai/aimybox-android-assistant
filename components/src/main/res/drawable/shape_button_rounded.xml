@@ -9,7 +9,6 @@
                 android:width="1dp"
                 android:color="@color/white" />
             <corners android:radius="45dp" />
-
         </shape>
     </item>
 </ripple>
