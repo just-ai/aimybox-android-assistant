@@ -79,6 +79,9 @@ fun Project.configureBintrayPublishing(version: String) {
         }
 
         tasks.named("bintrayUpload").configure { dependsOn("prepareArtifacts") }
+        tasks.named("publish${publicationName}PublicationToMavenLocal").configure {
+            dependsOn("prepareArtifacts")
+        }
     }
 }
 
