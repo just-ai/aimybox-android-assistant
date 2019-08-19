@@ -3,6 +3,7 @@ package com.justai.aimybox.components.adapter
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.justai.aimybox.components.L
 import com.justai.aimybox.components.R
 import com.justai.aimybox.components.base.AdapterDelegate
 import com.justai.aimybox.components.extensions.inflate
@@ -25,10 +26,11 @@ class ButtonsDelegate(
         override suspend fun bind(item: ButtonsWidget) {
             container.removeAllViews()
             item.buttons.map { button ->
-                container.inflate(R.layout.item_button, true).apply {
+                container.inflate(R.layout.item_button).apply {
                     check(this is TextView)
                     text = button.text
                     setOnClickListener { onClick(button) }
+                    container.addView(this)
                 }
             }
         }

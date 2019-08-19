@@ -42,8 +42,7 @@ class AimyboxAssistantFragment : Fragment(), CoroutineScope {
     private lateinit var recycler: RecyclerView
     private lateinit var aimyboxButton: AimyboxButton
 
-    private val adapter = AimyboxAssistantAdapter(viewModel::onButtonClick)
-
+    private lateinit var adapter : AimyboxAssistantAdapter
     private var revealTimeMs = 0L
 
     override fun onAttach(context: Context) {
@@ -68,9 +67,7 @@ class AimyboxAssistantFragment : Fragment(), CoroutineScope {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         view.apply {
             recycler = findViewById(R.id.fragment_aimybox_assistant_recycler)
-
             recycler.adapter = adapter
-
             aimyboxButton = findViewById(R.id.fragment_aimybox_assistant_button)
             aimyboxButton.setOnClickListener(::onAimyboxButtonClick)
         }
@@ -78,6 +75,8 @@ class AimyboxAssistantFragment : Fragment(), CoroutineScope {
 
     @CallSuper
     fun onViewModelInitialized(viewModel: AimyboxAssistantViewModel) {
+        adapter = AimyboxAssistantAdapter(viewModel::onButtonClick)
+
         viewModel.isAssistantVisible.observe(this, Observer { isVisible ->
             coroutineContext.cancelChildren()
             if (isVisible) aimyboxButton.expand() else aimyboxButton.collapse()
