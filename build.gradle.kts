@@ -1,14 +1,23 @@
 import com.android.build.gradle.BaseExtension
 import com.jfrog.bintray.gradle.BintrayExtension
 
+
 buildscript {
+    val kotlinVersion = "1.3.41"
+    val aimyboxVersion = "0.1.5"
+    val componentsVersion = "0.0.4"
+
+    extra.set("kotlinVersion", kotlinVersion)
+    extra.set("aimyboxVersion", aimyboxVersion)
+    extra.set("componentsVersion", componentsVersion)
+
     repositories {
         google()
         jcenter()
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.41")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("com.android.tools.build:gradle:3.4.2")
         classpath("com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6")
         classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4")
@@ -18,8 +27,6 @@ buildscript {
 }
 
 allprojects {
-    extra.set("kotlinVersion", "1.3.41")
-    extra.set("aimyboxVersion", "0.1.5")
 
     repositories {
         mavenLocal()
@@ -33,7 +40,8 @@ allprojects {
 
 subprojects {
     afterEvaluate {
-        if (name == "components") configureBintrayPublishing(version as String)
+        val componentsVersion: String by rootProject.extra
+        if (name == "components") configureBintrayPublishing(componentsVersion)
     }
 }
 

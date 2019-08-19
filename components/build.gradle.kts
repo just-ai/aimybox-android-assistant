@@ -1,3 +1,6 @@
+val aimyboxVersion: String by rootProject.extra
+val componentsVersion: String by rootProject.extra
+
 plugins {
     id("com.android.library")
     kotlin("android")
@@ -14,7 +17,7 @@ android {
         minSdkVersion(21)
         targetSdkVersion(29)
 
-        versionName = "0.0.4"
+        versionName = componentsVersion
         versionCode = 1
     }
 
@@ -63,8 +66,6 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.9.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.9.0")
-
-    val aimyboxVersion: String by rootProject.extra
 
     implementation("com.justai.aimybox:core:$aimyboxVersion")
     implementation("com.justai.aimybox:google-platform-speechkit:$aimyboxVersion")

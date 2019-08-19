@@ -1,3 +1,6 @@
+val componentsVersion: String by rootProject.extra
+val aimyboxVersion: String by rootProject.extra
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -14,7 +17,7 @@ android {
         minSdkVersion(21)
         targetSdkVersion(29)
 
-        versionName = "0.0.4"
+        versionName = componentsVersion
         versionCode = 1
     }
 
@@ -62,9 +65,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0-M1")
 
-    val aimyboxVersion: String by rootProject.extra
-
-    implementation(project(":components"))
+    implementation("com.justai.aimybox:components:$componentsVersion")
     implementation("com.justai.aimybox:core:$aimyboxVersion")
     implementation("com.justai.aimybox:google-platform-speechkit:$aimyboxVersion")
 }

@@ -73,7 +73,8 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
 
     @RequiresPermission("android.permission.RECORD_AUDIO")
     fun onButtonClick(button: Button) {
-        aimybox.stopRecognition()
+        widgetsInternal.value = widgetsInternal.value?.filter { it !is ButtonsWidget }.orEmpty()
+        aimybox.cancelRecognition()
         when (button) {
             is ResponseButton -> aimybox.send(Request(button.text))
             is LinkButton -> urlIntentsInternal.safeOffer(button.url)
@@ -94,7 +95,6 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
     }
 
     private fun addWidget(widget: AssistantWidget) {
-        L.d("Adding widget $widget")
         val currentList = widgets.value.orEmpty()
         widgetsInternal.value = currentList.plus(widget)
     }

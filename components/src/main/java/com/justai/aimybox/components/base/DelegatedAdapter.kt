@@ -28,7 +28,6 @@ abstract class DelegatedAdapter<T> : RecyclerView.Adapter<AdapterDelegate.ViewHo
     open fun onDataSetChanged(data: List<T>) {}
 
     fun setData(newData: List<T>) {
-        L.d("Data updated:\n${newData.joinToString("\n")}")
         data = newData
         notifyDataSetChanged()
     }
