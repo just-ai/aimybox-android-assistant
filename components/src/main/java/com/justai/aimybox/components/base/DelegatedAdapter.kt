@@ -3,19 +3,11 @@ package com.justai.aimybox.components.base
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.justai.aimybox.extensions.className
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
-import kotlin.coroutines.CoroutineContext
 
-abstract class DelegatedAdapter<T> : RecyclerView.Adapter<AdapterDelegate.ViewHolder<T>>(), CoroutineScope {
+abstract class DelegatedAdapter<T> : RecyclerView.Adapter<AdapterDelegate.ViewHolder<T>>() {
 
     protected abstract val delegates: List<AdapterDelegate<out T, *>>
-
-    final override val coroutineContext: CoroutineContext = Dispatchers.Main + Job()
 
     private var data: List<T> = emptyList()
 
@@ -24,9 +16,12 @@ abstract class DelegatedAdapter<T> : RecyclerView.Adapter<AdapterDelegate.ViewHo
 
     override fun getItemCount() = data.size
 
+    open fun onDataSetChanged(data: List<T>) {}
+
     fun setData(newData: List<T>) {
         data = newData
         notifyDataSetChanged()
+        onDataSetChanged(newData)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -47,7 +42,7 @@ abstract class DelegatedAdapter<T> : RecyclerView.Adapter<AdapterDelegate.ViewHo
         val item = data[position]!!
         val delegate = requireNotNull(delegates.find { it.isFor(item) })
                 as AdapterDelegate<T, AdapterDelegate.ViewHolder<T>>
-        launch { delegate.bind(holder, item) }
+        delegate.bind(holder, item)
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -55,7 +50,6 @@ abstract class DelegatedAdapter<T> : RecyclerView.Adapter<AdapterDelegate.ViewHo
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        coroutineContext.cancelChildren()
         recyclerReference = WeakReference<RecyclerView>(null)
     }
 

@@ -17,13 +17,15 @@ abstract class AdapterDelegate<TItem, TViewHolder : AdapterDelegate.ViewHolder<T
 
     abstract fun createViewHolder(parent: ViewGroup): TViewHolder
 
-    internal suspend fun bind(viewHolder: TViewHolder, item: TItem) = viewHolder.bind(item)
+    internal fun bind(viewHolder: TViewHolder, item: TItem) = viewHolder.bind(item)
 
     internal fun isFor(item: Any) = item::class.java == itemClass
 
-    abstract class ViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    abstract class ViewHolder<TItem>(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        abstract suspend fun bind(item: T)
+        val context = checkNotNull(itemView.context)
+
+        abstract fun bind(item: TItem)
 
         protected fun <T : View> findViewById(@IdRes id: Int) = itemView.findViewById<T>(id)!!
 

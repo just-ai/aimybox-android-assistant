@@ -6,6 +6,8 @@
         <item name="recording_color">@color/recording</item>
         <item name="button_extended_color">@color/white</item>
         <item name="button_collapsed_color">@color/primary</item>
+        <item name="button_drawable_extended_color">@color/black</item>
+        <item name="button_drawable_collapsed_color">@color/white</item>
         <item name="button_size">56dp</item>
         <item name="button_margin_end">36dp</item>
         <item name="button_margin_bottom">36dp</item>

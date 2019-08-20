@@ -8,6 +8,8 @@
         <attr name="recording_color" format="color|reference"/>
         <attr name="button_collapsed_color" format="color|reference"/>
         <attr name="button_extended_color" format="color|reference"/>
+        <attr name="button_drawable_collapsed_color" format="color|reference"/>
+        <attr name="button_drawable_extended_color" format="color|reference"/>
         <attr name="button_size" format="dimension"/>
         <attr name="button_margin_start" format="dimension" />
         <attr name="button_margin_end" format="dimension" />

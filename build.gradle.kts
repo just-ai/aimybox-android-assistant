@@ -1,14 +1,23 @@
 import com.android.build.gradle.BaseExtension
 import com.jfrog.bintray.gradle.BintrayExtension
 
+
 buildscript {
+    val kotlinVersion = "1.3.41"
+    val aimyboxVersion = "0.2.0"
+    val componentsVersion = "0.1.0"
+
+    extra.set("kotlinVersion", kotlinVersion)
+    extra.set("aimyboxVersion", aimyboxVersion)
+    extra.set("componentsVersion", componentsVersion)
+
     repositories {
         google()
         jcenter()
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.41")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("com.android.tools.build:gradle:3.4.2")
         classpath("com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6")
         classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4")
@@ -18,8 +27,6 @@ buildscript {
 }
 
 allprojects {
-    extra.set("kotlinVersion", "1.3.41")
-    extra.set("aimyboxVersion", "0.1.3")
 
     repositories {
         mavenLocal()
@@ -33,12 +40,8 @@ allprojects {
 
 subprojects {
     afterEvaluate {
-        listOf(
-            Application("app", "0.0.4", false),
-            Library("components", "0.0.4", true)
-        ).find { it.name == name }?.let { submodule ->
-            if (submodule.isPublication) configureBintrayPublishing(submodule.version)
-        } ?: logger.warn("Submodule $name is not defined")
+        val componentsVersion: String by rootProject.extra
+        if (name == "components") configureBintrayPublishing(componentsVersion)
     }
 }
 
@@ -67,7 +70,7 @@ fun Project.configureBintrayPublishing(version: String) {
             setLicenses("Apache-2.0")
             websiteUrl = "https://aimybox.com"
             publish = true
-            vcsUrl = "https://github.com/aimybox/aimybox-android-assistant.git"
+            vcsUrl = "https://github.com/just-ai/aimybox-android-assistant.git"
             version(closureOf<BintrayExtension.VersionConfig> {
                 name = version
             })
@@ -84,6 +87,9 @@ fun Project.configureBintrayPublishing(version: String) {
         }
 
         tasks.named("bintrayUpload").configure { dependsOn("prepareArtifacts") }
+        tasks.named("publish${publicationName}PublicationToMavenLocal").configure {
+            dependsOn("prepareArtifacts")
+        }
     }
 }
 
