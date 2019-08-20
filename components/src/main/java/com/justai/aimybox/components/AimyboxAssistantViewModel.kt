@@ -8,18 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.justai.aimybox.Aimybox
 import com.justai.aimybox.api.DialogApi
-import com.justai.aimybox.components.widget.AssistantWidget
-import com.justai.aimybox.components.widget.Button
-import com.justai.aimybox.components.widget.ButtonsWidget
-import com.justai.aimybox.components.widget.ImageWidget
-import com.justai.aimybox.components.widget.LinkButton
-import com.justai.aimybox.components.widget.RecognitionWidget
-import com.justai.aimybox.components.widget.ResponseButton
-import com.justai.aimybox.components.widget.SpeechWidget
+import com.justai.aimybox.components.widget.*
 import com.justai.aimybox.model.Request
+import com.justai.aimybox.model.Response
 import com.justai.aimybox.model.TextSpeech
 import com.justai.aimybox.model.reply.ButtonsReply
 import com.justai.aimybox.model.reply.ImageReply
+import com.justai.aimybox.model.reply.Reply
+import com.justai.aimybox.model.reply.TextReply
 import com.justai.aimybox.speechtotext.SpeechToText
 import com.justai.aimybox.texttospeech.TextToSpeech
 import kotlinx.coroutines.CoroutineScope
@@ -57,14 +53,12 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
         val events = Channel<Any>(Channel.UNLIMITED)
 
         aimybox.speechToTextEvents.observe { events.send(it) }
-        aimybox.textToSpeechEvents.observe { events.send(it) }
         aimybox.dialogApiEvents.observe { events.send(it) }
 
         launch {
             events.consumeEach {
                 when (it) {
                     is SpeechToText.Event -> onSpeechToTextEvent(it)
-                    is TextToSpeech.Event -> onTextToSpeechEvent(it)
                     is DialogApi.Event -> onDialogApiEvent(it)
                 }
             }
@@ -98,6 +92,10 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
         widgetsInternal.value = widgetsInternal.value?.filter { it !is ButtonsWidget }.orEmpty()
     }
 
+    private fun removeRecognitionWidgets() {
+        widgetsInternal.value = widgetsInternal.value?.filter { it !is RecognitionWidget }.orEmpty()
+    }
+
     private fun addWidget(widget: AssistantWidget) {
         val currentList = widgets.value.orEmpty()
         widgetsInternal.value = currentList.plus(widget)
@@ -116,29 +114,10 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
                 lastWidget?.textChannel?.close()
             }
             is SpeechToText.Event.EmptyRecognitionResult, SpeechToText.Event.RecognitionCancelled -> {
-                if (lastWidget is RecognitionWidget && !lastWidget.textChannel.isClosedForSend) {
-                    widgetsInternal.value = currentList.dropLast(1)
-                }
+                removeRecognitionWidgets()
             }
             is SpeechToText.Event.SoundVolumeRmsChanged -> {
                 soundVolumeRmsMutable.postValue(event.rmsDb)
-            }
-        }
-    }
-
-    private fun onTextToSpeechEvent(event: TextToSpeech.Event) {
-        val currentList = widgets.value
-        val lastWidget = currentList?.findLast { it is SpeechWidget } as SpeechWidget?
-        when (event) {
-            is TextToSpeech.Event.SpeechSequenceStarted -> addWidget(SpeechWidget())
-            is TextToSpeech.Event.SpeechStarted -> event.speech.let { speech ->
-                when (speech) {
-                    is TextSpeech -> lastWidget?.textChannel?.safeOffer(speech.text)
-                    else -> Unit
-                }
-            }
-            is TextToSpeech.Event.SpeechSequenceCompleted -> {
-                lastWidget?.textChannel?.close()
             }
         }
     }
@@ -147,24 +126,30 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
         when (event) {
             is DialogApi.Event.ResponseReceived -> removeButtonWidgets()
             is DialogApi.Event.NextReply -> processReply(event.reply)
+            is DialogApi.Event.RequestSent -> {
+                removeRecognitionWidgets()
+                addWidget(RequestWidget(event.request.query))
             }
         }
     }
 
-    private fun processReply(reply: Reply) = when (reply) {
-        is ImageReply -> addWidget(ImageWidget(reply.url))
-        is ButtonsReply -> {
-            val buttons = reply.buttons.map { button ->
-                val url = button.url
-                if (url != null) {
-                    LinkButton(button.text, url)
-                } else {
-                    ResponseButton(button.text)
+    private fun processReply(reply: Reply) {
+        L.d("Reply: $reply")
+        when (reply) {
+            is TextReply -> addWidget(ResponseWidget(reply.text))
+            is ImageReply -> addWidget(ImageWidget(reply.url))
+            is ButtonsReply -> {
+                val buttons = reply.buttons.map { button ->
+                    val url = button.url
+                    if (url != null) {
+                        LinkButton(button.text, url)
+                    } else {
+                        ResponseButton(button.text)
+                    }
                 }
+                addWidget(ButtonsWidget(buttons))
             }
-            addWidget(ButtonsWidget(buttons))
         }
-        else -> Unit
     }
 
     @CallSuper

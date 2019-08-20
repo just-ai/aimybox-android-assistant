@@ -6,7 +6,9 @@ sealed class AssistantWidget
 
 data class RecognitionWidget(val textChannel: Channel<String> = Channel(8), var currentText: String = "") : AssistantWidget()
 
-data class SpeechWidget(val textChannel: Channel<String> = Channel(8), var currentText: String? = null) : AssistantWidget()
+data class RequestWidget(val text: String) : AssistantWidget()
+
+data class ResponseWidget(val text: String) : AssistantWidget()
 
 data class ImageWidget(val url: String) : AssistantWidget()
 

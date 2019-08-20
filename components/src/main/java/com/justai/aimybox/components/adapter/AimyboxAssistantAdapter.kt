@@ -16,8 +16,9 @@ class AimyboxAssistantAdapter(
 
     override val delegates = listOf(
         RecognitionDelegate(::scrollRecyclerToBottom),
-        SpeechDelegate(::scrollRecyclerToBottom),
-        ImageDelegate(),
+        ResponseDelegate,
+        RequestDelegate,
+        ImageDelegate,
         ButtonsDelegate(onButtonClick)
     )
 

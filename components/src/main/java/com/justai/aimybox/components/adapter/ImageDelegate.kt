@@ -9,7 +9,7 @@ import com.justai.aimybox.components.base.AdapterDelegate
 import com.justai.aimybox.components.extensions.inflate
 import com.justai.aimybox.components.widget.ImageWidget
 
-class ImageDelegate : AdapterDelegate<ImageWidget, ImageDelegate.ViewHolder>(ImageWidget::class.java) {
+object ImageDelegate : AdapterDelegate<ImageWidget, ImageDelegate.ViewHolder>(ImageWidget::class.java) {
 
     override fun createViewHolder(parent: ViewGroup) = ViewHolder(parent.inflate(R.layout.item_image))
 
