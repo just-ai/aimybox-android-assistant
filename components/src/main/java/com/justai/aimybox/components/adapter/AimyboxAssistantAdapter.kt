@@ -10,12 +10,10 @@ import kotlinx.coroutines.launch
 
 class AimyboxAssistantAdapter(
     onButtonClick: (Button) -> Unit
-) : DelegatedAdapter<AssistantWidget>(), CoroutineScope {
-
-    private var scrollJob: Job? = null
+) : DelegatedAdapter<AssistantWidget>() {
 
     override val delegates = listOf(
-        RecognitionDelegate(::scrollRecyclerToBottom),
+        RecognitionDelegate,
         ResponseDelegate,
         RequestDelegate,
         ImageDelegate,
@@ -29,13 +27,7 @@ class AimyboxAssistantAdapter(
     private fun scrollRecyclerToBottom() {
         attachedRecycler?.let { recyclerView ->
             val itemCount = recyclerView.layoutManager?.itemCount ?: 0
-            if (itemCount > 0) {
-                scrollJob?.cancel()
-                scrollJob = launch {
-                    delay(100)
-                    recyclerView.smoothScrollToPosition(itemCount - 1)
-                }
-            }
+            if (itemCount > 0) recyclerView.smoothScrollToPosition(itemCount - 1)
         }
     }
 }

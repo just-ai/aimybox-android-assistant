@@ -1,10 +1,8 @@
 package com.justai.aimybox.components.widget
 
-import kotlinx.coroutines.channels.Channel
-
 sealed class AssistantWidget
 
-data class RecognitionWidget(val textChannel: Channel<String> = Channel(8), var currentText: String = "") : AssistantWidget()
+data class RecognitionWidget(val text: String = "", val previousText: String? = null) : AssistantWidget()
 
 data class RequestWidget(val text: String) : AssistantWidget()
 

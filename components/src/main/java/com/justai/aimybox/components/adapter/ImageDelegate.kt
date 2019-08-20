@@ -19,7 +19,7 @@ object ImageDelegate : AdapterDelegate<ImageWidget, ImageDelegate.ViewHolder>(Im
 
         private val imageView: ImageView = itemView as ImageView
 
-        override suspend fun bind(item: ImageWidget) {
+        override fun bind(item: ImageWidget) {
             Glide.with(context)
                 .load(item.url)
                 .into(imageView)

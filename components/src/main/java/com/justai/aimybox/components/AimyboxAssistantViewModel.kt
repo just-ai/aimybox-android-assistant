@@ -92,8 +92,8 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
         widgetsInternal.value = widgetsInternal.value?.filter { it !is ButtonsWidget }.orEmpty()
     }
 
-    private fun removeRecognitionWidgets() {
-        widgetsInternal.value = widgetsInternal.value?.filter { it !is RecognitionWidget }.orEmpty()
+    private fun removeRecognitionWidgets(transform: List<AssistantWidget>.() -> List<AssistantWidget> = { this }) {
+        widgetsInternal.value = widgetsInternal.value?.filter { it !is RecognitionWidget }.orEmpty().run(transform)
     }
 
     private fun addWidget(widget: AssistantWidget) {
@@ -102,16 +102,11 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
     }
 
     private fun onSpeechToTextEvent(event: SpeechToText.Event) {
-        val currentList = widgets.value
-        val lastWidget = currentList?.findLast { it is RecognitionWidget } as? RecognitionWidget
+        val previousText = (widgets.value?.find { it is RecognitionWidget } as? RecognitionWidget)?.text
         when (event) {
             is SpeechToText.Event.RecognitionStarted -> addWidget(RecognitionWidget())
-            is SpeechToText.Event.RecognitionPartialResult -> {
-                lastWidget?.textChannel?.safeOffer(event.text?.capitalize().orEmpty())
-            }
-            is SpeechToText.Event.RecognitionResult -> {
-                lastWidget?.textChannel?.safeOffer(event.text?.capitalize().orEmpty())
-                lastWidget?.textChannel?.close()
+            is SpeechToText.Event.RecognitionPartialResult -> event.text?.takeIf { it.isNotBlank() }?.let { text ->
+                removeRecognitionWidgets { plus(RecognitionWidget(text, previousText)) }
             }
             is SpeechToText.Event.EmptyRecognitionResult, SpeechToText.Event.RecognitionCancelled -> {
                 removeRecognitionWidgets()
@@ -127,8 +122,9 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
             is DialogApi.Event.ResponseReceived -> removeButtonWidgets()
             is DialogApi.Event.NextReply -> processReply(event.reply)
             is DialogApi.Event.RequestSent -> {
-                removeRecognitionWidgets()
-                addWidget(RequestWidget(event.request.query))
+                removeRecognitionWidgets {
+                    plus(RequestWidget(event.request.query))
+                }
             }
         }
     }

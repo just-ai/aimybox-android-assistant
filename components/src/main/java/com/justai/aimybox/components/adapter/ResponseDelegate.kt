@@ -20,7 +20,7 @@ object ResponseDelegate : AdapterDelegate<ResponseWidget, ResponseDelegate.ViewH
 
         private var textView: TextView = findViewById(R.id.item_speech_text)
 
-        override suspend fun bind(item: ResponseWidget) {
+        override fun bind(item: ResponseWidget) {
             textView.text = item.text
         }
 

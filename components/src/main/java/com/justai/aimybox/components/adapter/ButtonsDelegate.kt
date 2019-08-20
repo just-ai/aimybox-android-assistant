@@ -23,7 +23,7 @@ class ButtonsDelegate(
 
         private val container = itemView as ViewGroup
 
-        override suspend fun bind(item: ButtonsWidget) {
+        override fun bind(item: ButtonsWidget) {
             container.removeAllViews()
             item.buttons.map { button ->
                 container.inflate(R.layout.item_button).apply {

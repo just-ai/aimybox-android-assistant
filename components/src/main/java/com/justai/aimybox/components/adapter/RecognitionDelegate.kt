@@ -11,49 +11,23 @@ import com.justai.aimybox.components.R
 import com.justai.aimybox.components.base.AdapterDelegate
 import com.justai.aimybox.components.extensions.inflate
 import com.justai.aimybox.components.widget.RecognitionWidget
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 
-class RecognitionDelegate(
-    private val onUpdate: () -> Unit
-) : AdapterDelegate<RecognitionWidget, RecognitionDelegate.ViewHolder>(RecognitionWidget::class.java) {
+object RecognitionDelegate :
+    AdapterDelegate<RecognitionWidget, RecognitionDelegate.ViewHolder>(RecognitionWidget::class.java) {
 
     override fun createViewHolder(parent: ViewGroup): ViewHolder {
-        return ViewHolder(parent.inflate(R.layout.item_recognition), onUpdate)
+        return ViewHolder(parent.inflate(R.layout.item_recognition))
     }
 
-    class ViewHolder(
-        itemView: View,
-        private val onUpdate: () -> Unit
-    ) : AdapterDelegate.ViewHolder<RecognitionWidget>(itemView) {
+    class ViewHolder(itemView: View) : AdapterDelegate.ViewHolder<RecognitionWidget>(itemView) {
         private var textView: TextView = findViewById(R.id.item_recognition_text)
-        private var job: Job? = null
 
         private val textColor = getColor(R.color.text)
         private val hypotheticalTextColor = (textColor and 0x00FFFFFF) + 0x77000000 // add small transparency
 
-        override suspend fun bind(item: RecognitionWidget) {
-            job?.cancel()
-            textView.text = item.currentText
-            itemView.isVisible = item.currentText.isNotBlank()
-            if (item.textChannel.isClosedForReceive) return
-
-            coroutineScope {
-                job = launch { item.observeUpdates() }
-            }
-        }
-
-        private suspend fun RecognitionWidget.observeUpdates() = textChannel.consumeEach { newText ->
-            textView.text = if (textChannel.isClosedForSend) {
-                newText
-            } else {
-                createDifferenceSpannedString(currentText, newText) ?: newText
-            }
-            currentText = newText
-            itemView.isVisible = currentText.isNotBlank()
-            onUpdate()
+        override fun bind(item: RecognitionWidget) {
+            textView.text = item.previousText?.let { createDifferenceSpannedString(it, item.text) } ?: item.text
+            itemView.isVisible = item.text.isNotBlank()
         }
 
         private fun createDifferenceSpannedString(old: String, new: String): CharSequence? {

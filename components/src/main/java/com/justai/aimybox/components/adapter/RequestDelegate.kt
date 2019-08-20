@@ -20,7 +20,7 @@ object RequestDelegate : AdapterDelegate<RequestWidget, RequestDelegate.ViewHold
 
         private var textView: TextView = findViewById(R.id.item_recognition_text)
 
-        override suspend fun bind(item: RequestWidget) {
+        override fun bind(item: RequestWidget) {
             textView.text = item.text
         }
     }
