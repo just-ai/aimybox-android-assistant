@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 /**
  * Aimybox Fragment's view model.
  * */
-open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), CoroutineScope by MainScope(){
+open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), CoroutineScope by MainScope() {
 
     private val isAssistantVisibleInternal = MutableLiveData<Boolean>()
     val isAssistantVisible = isAssistantVisibleInternal.immutable()
@@ -73,7 +73,7 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
 
     @RequiresPermission("android.permission.RECORD_AUDIO")
     fun onButtonClick(button: Button) {
-        widgetsInternal.value = widgetsInternal.value?.filter { it !is ButtonsWidget }.orEmpty()
+        removeButtonWidgets()
         aimybox.cancelRecognition()
         when (button) {
             is ResponseButton -> aimybox.send(Request(button.text))
@@ -92,6 +92,10 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
             isAssistantVisibleInternal.postValue(true)
         }
         aimybox.toggleRecognition()
+    }
+
+    private fun removeButtonWidgets() {
+        widgetsInternal.value = widgetsInternal.value?.filter { it !is ButtonsWidget }.orEmpty()
     }
 
     private fun addWidget(widget: AssistantWidget) {
@@ -140,21 +144,27 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
     }
 
     private fun onDialogApiEvent(event: DialogApi.Event) {
-        if (event !is DialogApi.Event.NextReply) return
-        when (val reply = event.reply) {
-            is ImageReply -> addWidget(ImageWidget(reply.url))
-            is ButtonsReply -> {
-                val buttons = reply.buttons.map { button ->
-                    val url = button.url
-                    if (url != null) {
-                        LinkButton(button.text, url)
-                    } else {
-                        ResponseButton(button.text)
-                    }
-                }
-                addWidget(ButtonsWidget(buttons))
+        when (event) {
+            is DialogApi.Event.ResponseReceived -> removeButtonWidgets()
+            is DialogApi.Event.NextReply -> processReply(event.reply)
             }
         }
+    }
+
+    private fun processReply(reply: Reply) = when (reply) {
+        is ImageReply -> addWidget(ImageWidget(reply.url))
+        is ButtonsReply -> {
+            val buttons = reply.buttons.map { button ->
+                val url = button.url
+                if (url != null) {
+                    LinkButton(button.text, url)
+                } else {
+                    ResponseButton(button.text)
+                }
+            }
+            addWidget(ButtonsWidget(buttons))
+        }
+        else -> Unit
     }
 
     @CallSuper
