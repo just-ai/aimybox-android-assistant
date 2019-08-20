@@ -66,7 +66,7 @@ fun Project.configureBintrayPublishing(version: String) {
         pkg(closureOf<BintrayExtension.PackageConfig> {
             repo = "aimybox-android-assistant"
             name = project.name
-            userOrg = "just-ai"
+            userOrg = "aimybox"
             setLicenses("Apache-2.0")
             websiteUrl = "https://aimybox.com"
             publish = true

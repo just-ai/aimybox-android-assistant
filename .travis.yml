@@ -6,7 +6,7 @@ jdk:
 install:
   - yes | sdkmanager "tools" &>/dev/null
   - yes | sdkmanager "platform-tools" &>/dev/null
-  - yes | sdkmanager "platforms;android-28" &>/dev/null
+  - yes | sdkmanager "platforms;android-29" &>/dev/null
   - yes | sdkmanager --update &>/dev/null
   - yes | sdkmanager --licenses &>/dev/null
 
