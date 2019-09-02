@@ -8,6 +8,7 @@
     <com.justai.aimybox.components.view.AimyboxButton
         android:id="@+id/fragment_aimybox_assistant_button"
         android:layout_width="match_parent"
+        android:animateLayoutChanges="true"
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView

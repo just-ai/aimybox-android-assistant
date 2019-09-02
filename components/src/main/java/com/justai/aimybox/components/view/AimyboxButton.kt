@@ -164,7 +164,7 @@ internal class AimyboxButton @JvmOverloads constructor(
         addView(recordingView)
         addView(actionButton)
 
-        updateButtonState()
+        setButtonColor(false)
     }
 
     fun expand(duration: Long = revealDurationMs) {
@@ -175,7 +175,7 @@ internal class AimyboxButton @JvmOverloads constructor(
         inkView.isVisible = true
         recordingView.isVisible = true
 
-        updateButtonState()
+        setButtonColor(true)
 
         val targetScale = inkViewRadiusExpanded / inkViewRadiusCollapsed
 
@@ -197,7 +197,7 @@ internal class AimyboxButton @JvmOverloads constructor(
         contentViews.forEach { it.isVisible = false }
 
         inkAnimator = inkView.startInkAnimation(1.0F, duration) {
-            updateButtonState()
+            setButtonColor(false)
             inkView.isInvisible = true
         }
 
@@ -208,14 +208,14 @@ internal class AimyboxButton @JvmOverloads constructor(
         isRecording = true
         recordingAnimator?.cancel()
         if (!isVolumeInformationAvailable) recordingAnimator = startSimpleRecordingAnimation()
-        updateButtonState()
+        actionButton.setImageDrawable(buttonStopDrawable)
     }
 
     fun onRecordingStopped() {
         isRecording = false
         recordingAnimator?.cancel()
         setRecordingViewScale(1F)
-        updateButtonState()
+        actionButton.setImageDrawable(buttonStartDrawable)
     }
 
     fun onRecordingVolumeChanged(volume: Float) {
@@ -246,12 +246,9 @@ internal class AimyboxButton @JvmOverloads constructor(
         recordingAnimator = smoothSetRecordingViewScale(recordingView.scaleX, scale)
     }
 
-    private fun updateButtonState() {
+    private fun setButtonColor(isExpanded: Boolean) {
         actionButton.backgroundTintList = ColorStateList
             .valueOf(if (isExpanded) buttonExpandedColor else buttonCollapsedColor)
-
-        actionButton.setImageDrawable(if (isRecording) buttonStopDrawable else buttonStartDrawable)
-
         actionButton.imageTintList = ColorStateList
             .valueOf(if (isExpanded) buttonDrawableExpandedColor else buttonDrawableCollapsedColor)
     }
