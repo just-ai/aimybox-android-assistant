@@ -11,7 +11,7 @@
         android:layout_height="0dp"
         android:layout_margin="64dp"
         android:src="@drawable/icon_no_mic"
-        android:tint="@color/white"
+        android:tint="?android:textColor"
         app:layout_constraintBottom_toTopOf="@+id/fragment_require_microphone_permission_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,7 +25,6 @@
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="64dp"
         android:text="@string/require_mic_access"
-        android:textColor="@color/text"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/fragment_require_microphone_permission_button_grant"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,7 +39,6 @@
         android:layout_marginRight="32dp"
         android:backgroundTint="?android:attr/colorAccent"
         android:text="@string/grant_permission"
-        android:textColor="@color/button_text"
         app:layout_constraintBottom_toTopOf="@id/fragment_require_microphone_permission_button_cancel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
@@ -54,7 +52,6 @@
         android:layout_marginRight="32dp"
         android:layout_marginBottom="64dp"
         android:text="@string/cancel"
-        android:textColor="@color/button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
