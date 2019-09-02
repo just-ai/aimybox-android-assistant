@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <attr name="aimybox_buttonTheme" format="reference" />
-    <attr name="aimybox_assistantFontTheme" format="reference" />
-    <attr name="aimybox_userFontTheme" format="reference" />
+    <attr name="aimybox_assistantButtonTheme" format="reference" />
+    <attr name="aimybox_recognitionTheme" format="reference" />
+    <attr name="aimybox_responseTheme" format="reference" />
+    <attr name="aimybox_imageReplyTheme" format="reference" />
+    <attr name="aimybox_buttonReplyTheme" format="reference" />
 
     <declare-styleable name="AimyboxButton">
         <attr name="aimybox_backgroundColor" format="color|reference" />

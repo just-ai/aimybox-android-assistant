@@ -16,6 +16,7 @@ import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.core.animation.doOnCancel
 import androidx.core.content.withStyledAttributes
+import androidx.core.os.postDelayed
 import androidx.core.view.children
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -30,8 +31,8 @@ import kotlin.math.sqrt
 internal class AimyboxButton @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet?,
-    defStyleAttr: Int = R.attr.aimybox_buttonTheme,
-    defStyleRes: Int = R.style.DefaultAssistantTheme_Button
+    defStyleAttr: Int = R.attr.aimybox_assistantButtonTheme,
+    defStyleRes: Int = R.style.DefaultAssistantTheme_AssistantButton
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
     private var isExpanded: Boolean = false
@@ -195,11 +196,15 @@ internal class AimyboxButton @JvmOverloads constructor(
         recordingView.isVisible = false
 
         contentViews.forEach { it.isVisible = false }
-
-        inkAnimator = inkView.startInkAnimation(1.0F, duration) {
-            setButtonColor(false)
-            inkView.isInvisible = true
+        handler.postDelayed(300) {
+            inkAnimator?.cancel()
+            recordingAnimator?.cancel()
+            inkAnimator = inkView.startInkAnimation(1.0F, duration) {
+                setButtonColor(false)
+                inkView.isInvisible = true
+            }
         }
+
 
         isExpanded = false
     }

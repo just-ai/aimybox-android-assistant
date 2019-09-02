@@ -8,20 +8,17 @@ import com.justai.aimybox.components.base.AdapterDelegate
 import com.justai.aimybox.components.extensions.inflate
 import com.justai.aimybox.components.widget.ResponseWidget
 
-object ResponseDelegate : AdapterDelegate<ResponseWidget, ResponseDelegate.ViewHolder>(ResponseWidget::class.java) {
+object ResponseDelegate :
+    AdapterDelegate<ResponseWidget, ResponseDelegate.ViewHolder>(ResponseWidget::class.java) {
 
-    override fun createViewHolder(parent: ViewGroup): ViewHolder {
-        return ViewHolder(parent.inflate(R.layout.item_response))
-    }
+    override fun createViewHolder(parent: ViewGroup) =
+        ViewHolder(parent.inflate(R.layout.item_response))
 
-    class ViewHolder(
-        itemView: View
-    ) : AdapterDelegate.ViewHolder<ResponseWidget>(itemView) {
-
-        private var textView: TextView = findViewById(R.id.item_speech_text)
+    class ViewHolder(itemView: View) : AdapterDelegate.ViewHolder<ResponseWidget>(itemView) {
 
         override fun bind(item: ResponseWidget) {
-            textView.text = item.text
+            check(itemView is TextView)
+            itemView.text = item.text
         }
 
     }
