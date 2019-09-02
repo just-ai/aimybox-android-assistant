@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <attr name="buttonLaunchAssistantStyle" format="reference" />
+    <attr name="aimybox_buttonTheme" format="reference" />
+    <attr name="aimybox_assistantFontTheme" format="reference" />
+    <attr name="aimybox_userFontTheme" format="reference" />
 
     <declare-styleable name="AimyboxButton">
-        <attr name="background_color" format="color|reference"/>
-        <attr name="recording_color" format="color|reference"/>
-        <attr name="button_collapsed_color" format="color|reference"/>
-        <attr name="button_extended_color" format="color|reference"/>
-        <attr name="button_drawable_collapsed_color" format="color|reference"/>
-        <attr name="button_drawable_extended_color" format="color|reference"/>
-        <attr name="button_size" format="dimension"/>
-        <attr name="button_margin_start" format="dimension" />
-        <attr name="button_margin_end" format="dimension" />
-        <attr name="button_margin_bottom" format="dimension" />
-        <attr name="button_gravity">
+        <attr name="aimybox_backgroundColor" format="color|reference" />
+        <attr name="aimybox_recordingAnimationColor" format="color|reference" />
+
+        <attr name="aimybox_buttonExpandedColor" format="color|reference" />
+        <attr name="aimybox_buttonCollapsedColor" format="color|reference" />
+        <attr name="aimybox_buttonExpandedIconTint" format="color|reference" />
+        <attr name="aimybox_buttonCollapsedIconTint" format="color|reference" />
+        <attr name="aimybox_buttonSize" format="dimension" />
+        <attr name="aimybox_buttonMarginStart" format="dimension" />
+        <attr name="aimybox_buttonMarginEnd" format="dimension" />
+        <attr name="aimybox_buttonMarginBottom" format="dimension" />
+        <attr name="aimybox_buttonElevation" format="dimension" />
+
+        <attr name="aimybox_buttonGravity">
             <flag name="bottom" value="80" />
             <flag name="center" value="17" />
             <flag name="center_horizontal" value="1" />
@@ -26,8 +31,8 @@
             <flag name="top" value="48" />
         </attr>
 
-        <attr name="image_start" format="reference"/>
-        <attr name="image_stop" format="reference"/>
+        <attr name="aimybox_startRecordingDrawable" format="reference" />
+        <attr name="aimybox_stopRecordingDrawable" format="reference" />
     </declare-styleable>
 
 </resources>

@@ -2,10 +2,20 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary</item>
+        <item name="android:colorAccent">@color/primary</item>
+
+        <item name="aimybox_buttonTheme">@style/CustomButtonTheme</item>
+    </style>
+
+    <style name="CustomButtonTheme" parent="DefaultAssistantTheme.Button">
+
+        <!-- Customize Assistant button theme here -->
+
+        <!-- <item name="aimybox_backgroundColor">@color/primary</item> -->
+        <!-- <item name="aimybox_recordingAnimationColor">@color/recording</item> -->
+        <!-- <item name="aimybox_buttonExpandedColor">@color/white</item> -->
     </style>
 
 </resources>

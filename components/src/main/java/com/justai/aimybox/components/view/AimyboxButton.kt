@@ -5,6 +5,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
 import android.util.AttributeSet
@@ -12,6 +13,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewPropertyAnimator
 import android.widget.FrameLayout
+import androidx.annotation.ColorInt
 import androidx.core.animation.doOnCancel
 import androidx.core.content.withStyledAttributes
 import androidx.core.view.children
@@ -20,7 +22,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.justai.aimybox.components.R
-import com.justai.aimybox.components.extensions.dpToPx
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
@@ -29,37 +30,61 @@ import kotlin.math.sqrt
 internal class AimyboxButton @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet?,
-    defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr) {
-
-    companion object {
-        private const val RECORDING_VIEW_ELEVATION_DP = 5
-    }
+    defStyleAttr: Int = R.attr.aimybox_buttonTheme,
+    defStyleRes: Int = R.style.DefaultAssistantTheme_Button
+) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
     private var isExpanded: Boolean = false
+    private var isRecording: Boolean = false
+
+    /* Inner views */
 
     private val inkView: View = View(context)
     private val recordingView: View = View(context)
     private val actionButton = FloatingActionButton(context)
     private var contentViews = emptyList<View>()
 
-    private val revealDurationMs = context.resources.getInteger(R.integer.assistant_reveal_time_ms).toLong()
+    private val revealDurationMs = context.resources
+        .getInteger(R.integer.assistant_reveal_time_ms).toLong()
 
-    private var buttonExtendedColor: Int = Color.TRANSPARENT
+    /* Button */
+
+    @ColorInt
+    private var buttonExpandedColor: Int = Color.TRANSPARENT
+    @ColorInt
     private var buttonCollapsedColor: Int = Color.TRANSPARENT
-    private var buttonDrawableExtendedColor: Int = Color.TRANSPARENT
-    private var buttonDrawableCollapsedColor: Int = Color.TRANSPARENT
 
     private var buttonSize: Float = 0F
     private var buttonMarginStart: Int = 0
     private var buttonMarginEnd: Int = 0
     private var buttonMarginBottom: Int = 0
     private var buttonGravity: Int = 0
+    private var buttonElevation: Float = 0F
 
+    private var buttonStartDrawable: Drawable? = null
+    private var buttonStopDrawable: Drawable? = null
+
+    @ColorInt
+    private var buttonDrawableExpandedColor: Int = Color.TRANSPARENT
+    @ColorInt
+    private var buttonDrawableCollapsedColor: Int = Color.TRANSPARENT
+
+    /* Background Ink View */
+
+    @ColorInt
+    private var inkViewBackgroundColor: Int = Color.TRANSPARENT
+    private var inkViewBackground: Drawable? = null
     private var inkViewRadiusCollapsed: Float = 0F
     private var inkViewRadiusExpanded: Float = 0F
 
     private var inkAnimator: ViewPropertyAnimator? = null
+
+    /* Recording view */
+
+    @ColorInt
+    private var recordingViewBackgroundColor: Int = Color.TRANSPARENT
+    private var recordingViewBackground: Drawable? = null
+
     private var recordingAnimator: ValueAnimator? = null
     /**
      * The flag is automatically set to true when [onRecordingVolumeChanged] is called.
@@ -75,51 +100,71 @@ internal class AimyboxButton @JvmOverloads constructor(
     private var lastVolumeSampleTime: Long? = null
 
     init {
-        context.withStyledAttributes(
-            attrs,
-            R.styleable.AimyboxButton,
-            defStyleAttr,
-            R.style.BaseAssistantTheme
-        ) {
-            getColor(R.styleable.AimyboxButton_background_color, Color.TRANSPARENT)
-                .let(::createCircleShape)
-                .let(inkView::setBackground)
-
-            getColor(R.styleable.AimyboxButton_recording_color, Color.TRANSPARENT)
-                .let(::createCircleShape)
-                .let(recordingView::setBackground)
-
-            buttonExtendedColor =
-                getColor(R.styleable.AimyboxButton_button_extended_color, Color.TRANSPARENT)
+        context.withStyledAttributes(attrs, R.styleable.AimyboxButton, defStyleAttr, defStyleRes) {
+            buttonExpandedColor =
+                getColor(R.styleable.AimyboxButton_aimybox_buttonExpandedColor, Color.TRANSPARENT)
             buttonCollapsedColor =
-                getColor(R.styleable.AimyboxButton_button_collapsed_color, Color.TRANSPARENT)
+                getColor(R.styleable.AimyboxButton_aimybox_buttonCollapsedColor, Color.TRANSPARENT)
 
-            buttonDrawableExtendedColor =
-                getColor(R.styleable.AimyboxButton_button_drawable_extended_color, Color.TRANSPARENT)
+            buttonStartDrawable =
+                getDrawable(R.styleable.AimyboxButton_aimybox_startRecordingDrawable)
+            buttonStopDrawable =
+                getDrawable(R.styleable.AimyboxButton_aimybox_stopRecordingDrawable)
+
+            buttonDrawableExpandedColor =
+                getColor(
+                    R.styleable.AimyboxButton_aimybox_buttonExpandedIconTint,
+                    Color.TRANSPARENT
+                )
             buttonDrawableCollapsedColor =
-                getColor(R.styleable.AimyboxButton_button_drawable_collapsed_color, Color.TRANSPARENT)
+                getColor(
+                    R.styleable.AimyboxButton_aimybox_buttonCollapsedIconTint,
+                    Color.TRANSPARENT
+                )
 
-            buttonSize = getDimension(R.styleable.AimyboxButton_button_size, 0F)
-            buttonMarginStart = getDimension(R.styleable.AimyboxButton_button_margin_start, 0F).toInt()
-            buttonMarginEnd = getDimension(R.styleable.AimyboxButton_button_margin_end, 0F).toInt()
+            buttonSize =
+                getDimension(R.styleable.AimyboxButton_aimybox_buttonSize, 0F)
+            buttonMarginStart =
+                getDimension(R.styleable.AimyboxButton_aimybox_buttonMarginStart, 0F).toInt()
+            buttonMarginEnd =
+                getDimension(R.styleable.AimyboxButton_aimybox_buttonMarginEnd, 0F).toInt()
             buttonMarginBottom =
-                getDimension(R.styleable.AimyboxButton_button_margin_bottom, 0F).toInt()
+                getDimension(R.styleable.AimyboxButton_aimybox_buttonMarginBottom, 0F).toInt()
+            buttonElevation =
+                getDimension(R.styleable.AimyboxButton_aimybox_buttonElevation, 0F)
+
             buttonGravity = getInteger(
-                R.styleable.AimyboxButton_button_gravity,
+                R.styleable.AimyboxButton_aimybox_buttonGravity,
                 Gravity.BOTTOM or Gravity.END
             )
 
-            setButtonColors(false)
-            actionButton.setImageDrawable(getDrawable(R.styleable.AimyboxButton_image_start))
-            actionButton.customSize = buttonSize.toInt()
+            inkViewBackgroundColor =
+                getColor(R.styleable.AimyboxButton_aimybox_backgroundColor, Color.TRANSPARENT)
+            inkViewBackground = createCircleShape(inkViewBackgroundColor)
+
+            recordingViewBackgroundColor =
+                getColor(
+                    R.styleable.AimyboxButton_aimybox_recordingAnimationColor,
+                    Color.TRANSPARENT
+                )
+
+            recordingViewBackground = createCircleShape(recordingViewBackgroundColor)
         }
 
-        recordingView.elevation = RECORDING_VIEW_ELEVATION_DP.dpToPx(context)
+        actionButton.customSize = buttonSize.toInt()
+        actionButton.elevation = buttonElevation
+
+        inkView.background = inkViewBackground
+
+        recordingView.background = recordingViewBackground
+        recordingView.elevation = buttonElevation
         recordingView.outlineProvider = null
 
         addView(inkView)
         addView(recordingView)
         addView(actionButton)
+
+        updateButtonState()
     }
 
     fun expand(duration: Long = revealDurationMs) {
@@ -130,7 +175,7 @@ internal class AimyboxButton @JvmOverloads constructor(
         inkView.isVisible = true
         recordingView.isVisible = true
 
-        setButtonColors(true)
+        updateButtonState()
 
         val targetScale = inkViewRadiusExpanded / inkViewRadiusCollapsed
 
@@ -152,23 +197,25 @@ internal class AimyboxButton @JvmOverloads constructor(
         contentViews.forEach { it.isVisible = false }
 
         inkAnimator = inkView.startInkAnimation(1.0F, duration) {
-            setButtonColors(false)
+            updateButtonState()
             inkView.isInvisible = true
         }
 
         isExpanded = false
     }
-;
-    fun onRecordingStopped() {
-        recordingAnimator?.cancel()
-        setRecordingViewScale(1F)
-    }
 
     fun onRecordingStarted() {
+        isRecording = true
         recordingAnimator?.cancel()
-        if (!isVolumeInformationAvailable) {
-            recordingAnimator = startSimpleRecordingAnimation()
-        }
+        if (!isVolumeInformationAvailable) recordingAnimator = startSimpleRecordingAnimation()
+        updateButtonState()
+    }
+
+    fun onRecordingStopped() {
+        isRecording = false
+        recordingAnimator?.cancel()
+        setRecordingViewScale(1F)
+        updateButtonState()
     }
 
     fun onRecordingVolumeChanged(volume: Float) {
@@ -199,11 +246,14 @@ internal class AimyboxButton @JvmOverloads constructor(
         recordingAnimator = smoothSetRecordingViewScale(recordingView.scaleX, scale)
     }
 
-    private fun setButtonColors(extended: Boolean) {
+    private fun updateButtonState() {
         actionButton.backgroundTintList = ColorStateList
-            .valueOf(if (extended) buttonExtendedColor else buttonCollapsedColor)
+            .valueOf(if (isExpanded) buttonExpandedColor else buttonCollapsedColor)
+
+        actionButton.setImageDrawable(if (isRecording) buttonStopDrawable else buttonStartDrawable)
+
         actionButton.imageTintList = ColorStateList
-            .valueOf(if (extended) buttonDrawableExtendedColor else buttonDrawableCollapsedColor)
+            .valueOf(if (isExpanded) buttonDrawableExpandedColor else buttonDrawableCollapsedColor)
     }
 
     private fun setRecordingViewScale(scale: Float) = recordingView.apply {
@@ -213,12 +263,13 @@ internal class AimyboxButton @JvmOverloads constructor(
         scaleY = scale
     }
 
-    private fun smoothSetRecordingViewScale(fromScale: Float, toScale: Float) = ValueAnimator().apply {
-        setFloatValues(fromScale, toScale)
-        duration = soundVolumeAnimationDuration
-        addUpdateListener { animator -> setRecordingViewScale(animator.animatedValue as Float) }
-        start()
-    }
+    private fun smoothSetRecordingViewScale(fromScale: Float, toScale: Float) =
+        ValueAnimator().apply {
+            setFloatValues(fromScale, toScale)
+            duration = soundVolumeAnimationDuration
+            addUpdateListener { animator -> setRecordingViewScale(animator.animatedValue as Float) }
+            start()
+        }
 
     private fun startSimpleRecordingAnimation() = ValueAnimator().apply {
         repeatCount = ValueAnimator.INFINITE
@@ -257,8 +308,10 @@ internal class AimyboxButton @JvmOverloads constructor(
         val viewCenterX = x + radiusCollapsed
         val viewCenterY = y + radiusCollapsed
 
-        val expandHorizontal = max(parentWidth - viewCenterX, parentWidth - (parentWidth - viewCenterX))
-        val expandVertical = max(parentHeight - viewCenterY, parentHeight - (parentHeight - viewCenterY))
+        val expandHorizontal =
+            max(parentWidth - viewCenterX, parentWidth - (parentWidth - viewCenterX))
+        val expandVertical =
+            max(parentHeight - viewCenterY, parentHeight - (parentHeight - viewCenterY))
 
         return sqrt(expandHorizontal.pow(2) + expandVertical.pow(2))
     }
@@ -273,13 +326,13 @@ internal class AimyboxButton @JvmOverloads constructor(
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        contentViews = children.filter { it != actionButton && it != inkView && it != recordingView }.toList()
+        contentViews =
+            children.filter { it != actionButton && it != inkView && it != recordingView }.toList()
         contentViews.forEach { it.isVisible = false }
         actionButton.bringToFront()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-
         val width = MeasureSpec.getSize(widthMeasureSpec)
         val height = MeasureSpec.getSize(heightMeasureSpec)
         setMeasuredDimension(width, height)
