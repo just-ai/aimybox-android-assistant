@@ -5,19 +5,31 @@
     android:layout_height="match_parent"
     android:background="?android:attr/colorPrimary">
 
+    <ImageView
+        android:id="@+id/fragment_require_microphone_permission_icon"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="64dp"
+        android:src="@drawable/icon_no_mic"
+        android:tint="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/fragment_require_microphone_permission_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
+        android:id="@+id/fragment_require_microphone_permission_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:fontFamily=""
+        android:layout_marginBottom="64dp"
         android:text="@string/require_mic_access"
         android:textColor="@color/text"
-        android:textSize="21sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/fragment_require_microphone_permission_button_grant"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/fragment_require_microphone_permission_button_grant"
@@ -31,7 +43,7 @@
         android:textColor="@color/button_text"
         app:layout_constraintBottom_toTopOf="@id/fragment_require_microphone_permission_button_cancel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/fragment_require_microphone_permission_button_cancel"
