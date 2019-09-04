@@ -3,7 +3,6 @@ package com.justai.aimybox.components.adapter
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.justai.aimybox.components.L
 import com.justai.aimybox.components.R
 import com.justai.aimybox.components.base.AdapterDelegate
 import com.justai.aimybox.components.extensions.inflate
@@ -14,7 +13,8 @@ class ButtonsDelegate(
     private val onClick: (Button) -> Unit
 ) : AdapterDelegate<ButtonsWidget, ButtonsDelegate.ViewHolder>(ButtonsWidget::class.java) {
 
-    override fun createViewHolder(parent: ViewGroup) = ViewHolder(parent.inflate(R.layout.item_buttons), onClick)
+    override fun createViewHolder(parent: ViewGroup) =
+        ViewHolder(parent.inflate(R.layout.item_buttons), onClick)
 
     class ViewHolder(
         itemView: View,

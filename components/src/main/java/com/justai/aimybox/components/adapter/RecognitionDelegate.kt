@@ -15,18 +15,18 @@ import com.justai.aimybox.components.widget.RecognitionWidget
 object RecognitionDelegate :
     AdapterDelegate<RecognitionWidget, RecognitionDelegate.ViewHolder>(RecognitionWidget::class.java) {
 
-    override fun createViewHolder(parent: ViewGroup): ViewHolder {
-        return ViewHolder(parent.inflate(R.layout.item_recognition))
-    }
+    override fun createViewHolder(parent: ViewGroup) =
+        ViewHolder(parent.inflate(R.layout.item_recognition))
 
     class ViewHolder(itemView: View) : AdapterDelegate.ViewHolder<RecognitionWidget>(itemView) {
-        private var textView: TextView = findViewById(R.id.item_recognition_text)
 
         private val textColor = getColor(R.color.text)
-        private val hypotheticalTextColor = (textColor and 0x00FFFFFF) + 0x77000000 // add small transparency
+        private val hypotheticalTextColor = (textColor and 0x00FFFFFF) + 0x77000000
 
         override fun bind(item: RecognitionWidget) {
-            textView.text = item.previousText?.let { createDifferenceSpannedString(it, item.text) } ?: item.text
+            check(itemView is TextView)
+            itemView.text = item.previousText?.let { createDifferenceSpannedString(it, item.text) }
+                ?: item.text
             itemView.isVisible = item.text.isNotBlank()
         }
 
@@ -34,7 +34,7 @@ object RecognitionDelegate :
             var differenceIndex = 0
             if (old == new) return new
 
-            for (i in 0 until new.length) if (i >= old.length || new[i] != old[i]) {
+            for (i in new.indices) if (i >= old.length || new[i] != old[i]) {
                 differenceIndex = i
                 break
             }

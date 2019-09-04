@@ -1,20 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    tools:background="@android:color/black">
-
-    <TextView
-        android:id="@+id/item_speech_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:textColor="@color/white"
-        android:textSize="32sp"
-        android:theme="@style/Font.Aimybox"
-        tools:text="Lorem ipsum dolor sit amet" />
-
-</FrameLayout>
+<TextView style="?attr/aimybox_responseTheme" />

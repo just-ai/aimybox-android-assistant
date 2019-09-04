@@ -60,10 +60,9 @@ dependencies {
     implementation("androidx.core:core-ktx:1.0.2")
     implementation("androidx.lifecycle:lifecycle-extensions:2.0.0")
 
-
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0-M1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0")
 
     implementation("com.justai.aimybox:components:$componentsVersion")
     implementation("com.justai.aimybox:core:$aimyboxVersion")
