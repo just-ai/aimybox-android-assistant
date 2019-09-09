@@ -65,6 +65,10 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
         }
     }
 
+    fun setInitialPhrase(text: String) {
+        widgetsInternal.value = listOf(ResponseWidget(text))
+    }
+
     @RequiresPermission("android.permission.RECORD_AUDIO")
     fun onButtonClick(button: Button) {
         removeButtonWidgets()
