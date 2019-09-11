@@ -56,11 +56,10 @@ class AimyboxAssistantFragment : Fragment(), CoroutineScope {
                     .get(AimyboxAssistantViewModel::class.java)
 
             val initialPhrase = arguments?.getParcelable<Arguments>(ARGUMENTS_KEY)?.initialPhrase
-                ?: context.getString(R.string.default_initial_phrase)
+                ?: context.getString(R.string.initial_phrase)
 
             viewModel.setInitialPhrase(initialPhrase)
         }
-        onViewModelInitialized(viewModel)
 
         revealTimeMs = context.resources.getInteger(R.integer.assistant_reveal_time_ms).toLong()
     }
@@ -75,15 +74,12 @@ class AimyboxAssistantFragment : Fragment(), CoroutineScope {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         view.apply {
             recycler = findViewById(R.id.fragment_aimybox_assistant_recycler)
-            recycler.adapter = adapter
             aimyboxButton = findViewById(R.id.fragment_aimybox_assistant_button)
             aimyboxButton.setOnClickListener(::onAimyboxButtonClick)
         }
-    }
 
-    @CallSuper
-    fun onViewModelInitialized(viewModel: AimyboxAssistantViewModel) {
         adapter = AimyboxAssistantAdapter(viewModel::onButtonClick)
+        recycler.adapter = adapter
 
         viewModel.isAssistantVisible.observe(viewLifecycleOwner, Observer { isVisible ->
             coroutineContext.cancelChildren()
