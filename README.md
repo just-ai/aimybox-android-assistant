@@ -30,6 +30,13 @@ This repository contains all you need to embed intelligent voice assistant into 
 # How to start using
 
 ```kotlin
+    android {
+        compileOptions {
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
+    }
+
     repositories {
         maven("https://dl.bintray.com/aimybox/aimybox-android-assistant/")
         maven("https://dl.bintray.com/aimybox/aimybox-android-sdk/")
