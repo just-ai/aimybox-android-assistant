@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,20 +21,17 @@ import com.justai.aimybox.components.adapter.AimyboxAssistantAdapter
 import com.justai.aimybox.components.extensions.isPermissionGranted
 import com.justai.aimybox.components.extensions.startActivityIfExist
 import com.justai.aimybox.components.view.AimyboxButton
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.cancelChildren
+import kotlinx.android.parcel.Parcelize
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
-
 
 class AimyboxAssistantFragment : Fragment(), CoroutineScope {
 
     companion object {
         private const val REQUEST_PERMISSION_CODE = 100
+
+        private const val ARGUMENTS_KEY = "arguments"
     }
 
     override val coroutineContext: CoroutineContext = Dispatchers.Main + Job()
@@ -42,7 +40,7 @@ class AimyboxAssistantFragment : Fragment(), CoroutineScope {
     private lateinit var recycler: RecyclerView
     private lateinit var aimyboxButton: AimyboxButton
 
-    private lateinit var adapter : AimyboxAssistantAdapter
+    private lateinit var adapter: AimyboxAssistantAdapter
     private var revealTimeMs = 0L
 
     override fun onAttach(context: Context) {
@@ -53,36 +51,42 @@ class AimyboxAssistantFragment : Fragment(), CoroutineScope {
         }
 
         if (!::viewModel.isInitialized) {
-            viewModel = ViewModelProviders.of(requireActivity(), aimyboxProvider.getViewModelFactory())
-                .get(AimyboxAssistantViewModel::class.java)
+            viewModel =
+                ViewModelProviders.of(requireActivity(), aimyboxProvider.getViewModelFactory())
+                    .get(AimyboxAssistantViewModel::class.java)
+
+            val initialPhrase = arguments?.getParcelable<Arguments>(ARGUMENTS_KEY)?.initialPhrase
+                ?: context.getString(R.string.initial_phrase)
+
+            viewModel.setInitialPhrase(initialPhrase)
         }
-        onViewModelInitialized(viewModel)
 
         revealTimeMs = context.resources.getInteger(R.integer.assistant_reveal_time_ms).toLong()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ) =
         inflater.inflate(R.layout.fragment_aimybox_assistant, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         view.apply {
             recycler = findViewById(R.id.fragment_aimybox_assistant_recycler)
-            recycler.adapter = adapter
             aimyboxButton = findViewById(R.id.fragment_aimybox_assistant_button)
             aimyboxButton.setOnClickListener(::onAimyboxButtonClick)
         }
-    }
 
-    @CallSuper
-    fun onViewModelInitialized(viewModel: AimyboxAssistantViewModel) {
         adapter = AimyboxAssistantAdapter(viewModel::onButtonClick)
+        recycler.adapter = adapter
 
-        viewModel.isAssistantVisible.observe(this, Observer { isVisible ->
+        viewModel.isAssistantVisible.observe(viewLifecycleOwner, Observer { isVisible ->
             coroutineContext.cancelChildren()
             if (isVisible) aimyboxButton.expand() else aimyboxButton.collapse()
         })
 
-        viewModel.aimyboxState.observe(this, Observer { state ->
+        viewModel.aimyboxState.observe(viewLifecycleOwner, Observer { state ->
             if (state == Aimybox.State.LISTENING) {
                 aimyboxButton.onRecordingStarted()
             } else {
@@ -90,7 +94,7 @@ class AimyboxAssistantFragment : Fragment(), CoroutineScope {
             }
         })
 
-        viewModel.widgets.observe(this, Observer(adapter::setData))
+        viewModel.widgets.observe(viewLifecycleOwner, Observer(adapter::setData))
 
         viewModel.soundVolumeRms.observe(this, Observer { volume ->
             if (::aimyboxButton.isInitialized) {
@@ -115,7 +119,11 @@ class AimyboxAssistantFragment : Fragment(), CoroutineScope {
     }
 
     @SuppressLint("MissingPermission")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         if (requestCode == REQUEST_PERMISSION_CODE && permissions.firstOrNull() == Manifest.permission.RECORD_AUDIO) {
             if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
                 viewModel.onAssistantButtonClick()
@@ -127,6 +135,12 @@ class AimyboxAssistantFragment : Fragment(), CoroutineScope {
                 }
             }
         }
+    }
+    /**
+    * Use the method to set custom initial phrase for the assistant
+    * */
+    fun putArguments(arguments: Arguments) = apply {
+        setArguments(Bundle().apply { putParcelable(ARGUMENTS_KEY, arguments) })
     }
 
     /**
@@ -159,4 +173,7 @@ class AimyboxAssistantFragment : Fragment(), CoroutineScope {
             else -> null
         }
     }
+
+    @Parcelize
+    data class Arguments(val initialPhrase: String? = null) : Parcelable
 }

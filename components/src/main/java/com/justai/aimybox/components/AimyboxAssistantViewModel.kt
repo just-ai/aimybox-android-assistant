@@ -10,22 +10,15 @@ import com.justai.aimybox.Aimybox
 import com.justai.aimybox.api.DialogApi
 import com.justai.aimybox.components.widget.*
 import com.justai.aimybox.model.Request
-import com.justai.aimybox.model.Response
-import com.justai.aimybox.model.TextSpeech
 import com.justai.aimybox.model.reply.ButtonsReply
 import com.justai.aimybox.model.reply.ImageReply
 import com.justai.aimybox.model.reply.Reply
 import com.justai.aimybox.model.reply.TextReply
 import com.justai.aimybox.speechtotext.SpeechToText
-import com.justai.aimybox.texttospeech.TextToSpeech
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.launch
 
 /**
@@ -63,6 +56,10 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
                 }
             }
         }
+    }
+
+    fun setInitialPhrase(text: String) {
+        widgetsInternal.value = listOf(ResponseWidget(text))
     }
 
     @RequiresPermission("android.permission.RECORD_AUDIO")
