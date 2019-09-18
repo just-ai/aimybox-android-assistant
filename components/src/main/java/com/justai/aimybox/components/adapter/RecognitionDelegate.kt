@@ -11,6 +11,7 @@ import com.justai.aimybox.components.R
 import com.justai.aimybox.components.base.AdapterDelegate
 import com.justai.aimybox.components.extensions.inflate
 import com.justai.aimybox.components.widget.RecognitionWidget
+import kotlin.math.max
 
 object RecognitionDelegate :
     AdapterDelegate<RecognitionWidget, RecognitionDelegate.ViewHolder>(RecognitionWidget::class.java) {
@@ -41,7 +42,7 @@ object RecognitionDelegate :
 
             if (differenceIndex == 0) return null
 
-            val lastNotUpdatedWordEnd = new.substring(0..differenceIndex).lastIndexOf(' ')
+            val lastNotUpdatedWordEnd = max(new.substring(0, differenceIndex).lastIndexOf(' '), 0)
 
             return buildSpan(new, lastNotUpdatedWordEnd)
         }
@@ -56,5 +57,4 @@ object RecognitionDelegate :
         }
 
     }
-
 }
