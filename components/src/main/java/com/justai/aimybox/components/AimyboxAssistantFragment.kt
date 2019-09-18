@@ -11,7 +11,6 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -26,6 +25,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.consumeEach
 import kotlin.coroutines.CoroutineContext
 
+@Suppress("unused")
 class AimyboxAssistantFragment : Fragment(), CoroutineScope {
 
     companion object {
@@ -157,6 +157,16 @@ class AimyboxAssistantFragment : Fragment(), CoroutineScope {
         val isVisible = viewModel.isAssistantVisible.value ?: false
         if (isVisible) viewModel.onBackPressed()
         return isVisible
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.muteAimybox()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.unmuteAimybox()
     }
 
     override fun onDestroyView() {

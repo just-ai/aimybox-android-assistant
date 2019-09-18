@@ -4,8 +4,8 @@ import com.jfrog.bintray.gradle.BintrayExtension
 
 buildscript {
     val kotlinVersion = "1.3.50"
-    val aimyboxVersion = "0.2.21"
-    val componentsVersion = "0.1.4"
+    val aimyboxVersion = "0.3.0"
+    val componentsVersion = "0.1.5"
 
     extra.set("kotlinVersion", kotlinVersion)
     extra.set("aimyboxVersion", aimyboxVersion)
