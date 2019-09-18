@@ -24,7 +24,8 @@ import kotlinx.coroutines.launch
 /**
  * Aimybox Fragment's view model.
  * */
-open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), CoroutineScope by MainScope() {
+open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(),
+    CoroutineScope by MainScope() {
 
     private val isAssistantVisibleInternal = MutableLiveData<Boolean>()
     val isAssistantVisible = isAssistantVisibleInternal.immutable()
@@ -58,6 +59,10 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
         }
     }
 
+    fun muteAimybox() = aimybox.mute()
+
+    fun unmuteAimybox() = aimybox.unmute()
+
     fun setInitialPhrase(text: String) {
         widgetsInternal.value = listOf(ResponseWidget(text))
     }
@@ -65,7 +70,6 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
     @RequiresPermission("android.permission.RECORD_AUDIO")
     fun onButtonClick(button: Button) {
         removeButtonWidgets()
-        aimybox.cancelRecognition()
         when (button) {
             is ResponseButton -> aimybox.send(Request(button.text))
             is LinkButton -> urlIntentsInternal.safeOffer(button.url)
@@ -90,7 +94,8 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
     }
 
     private fun removeRecognitionWidgets(transform: List<AssistantWidget>.() -> List<AssistantWidget> = { this }) {
-        widgetsInternal.value = widgetsInternal.value?.filter { it !is RecognitionWidget }.orEmpty().run(transform)
+        widgetsInternal.value =
+            widgetsInternal.value?.filter { it !is RecognitionWidget }.orEmpty().run(transform)
     }
 
     private fun addWidget(widget: AssistantWidget) {
@@ -99,7 +104,8 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
     }
 
     private fun onSpeechToTextEvent(event: SpeechToText.Event) {
-        val previousText = (widgets.value?.find { it is RecognitionWidget } as? RecognitionWidget)?.text
+        val previousText =
+            (widgets.value?.find { it is RecognitionWidget } as? RecognitionWidget)?.text
         when (event) {
             is SpeechToText.Event.RecognitionStarted -> addWidget(RecognitionWidget())
             is SpeechToText.Event.RecognitionPartialResult -> event.text?.takeIf { it.isNotBlank() }?.let { text ->
@@ -116,8 +122,10 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(), Corout
 
     private fun onDialogApiEvent(event: DialogApi.Event) {
         when (event) {
-            is DialogApi.Event.ResponseReceived -> removeButtonWidgets()
-            is DialogApi.Event.NextReply -> processReply(event.reply)
+            is DialogApi.Event.ResponseReceived -> {
+                removeButtonWidgets()
+                event.response?.replies?.forEach(::processReply)
+            }
             is DialogApi.Event.RequestSent -> {
                 removeRecognitionWidgets {
                     plus(RequestWidget(event.request.query))
