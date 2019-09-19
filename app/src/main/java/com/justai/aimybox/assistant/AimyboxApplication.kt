@@ -13,7 +13,7 @@ import java.util.*
 class AimyboxApplication : Application(), AimyboxProvider {
 
     companion object {
-        private const val AIMYBOX_API_KEY = "egLc7Fs5C5IfYMxYBo4HQULI0Tqpbm3A"
+        private const val AIMYBOX_API_KEY = "Ldf0j7WZi3KwNah2aNeXVIACz0lb9qMH"
     }
 
     override val aimybox by lazy { createAimybox(this) }
@@ -21,8 +21,8 @@ class AimyboxApplication : Application(), AimyboxProvider {
     private fun createAimybox(context: Context): Aimybox {
         val unitId = UUID.randomUUID().toString()
 
-        val textToSpeech = GooglePlatformTextToSpeech(context)
-        val speechToText = GooglePlatformSpeechToText(context)
+        val textToSpeech = GooglePlatformTextToSpeech(context, Locale.ENGLISH)
+        val speechToText = GooglePlatformSpeechToText(context, Locale.ENGLISH)
 
         val dialogApi = AimyboxDialogApi(AIMYBOX_API_KEY, unitId)
 
