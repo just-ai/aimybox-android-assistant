@@ -1,7 +1,6 @@
 <h1 align="center">
     <br>
-    <a href="https://aimybox.com"><img src="https://app.aimybox.com/assets/images/aimybox.png"
-                                                                    height="200"></a>
+    <a href="https://aimybox.com"><img src="https://i.imgur.com/DUCxPIa.gif"></a>
     <br><br>
     Aimybox voice assistant
 </h1>
@@ -20,7 +19,7 @@ This repository contains all you need to embed intelligent voice assistant into 
 # Key Features
 
 * Provides ready to use **UI components** for fast building of your voice assistant app
-* Modular and independent from speech-to-text and text-to-speech vendors
+* Modular and independent from speech-to-text, text-to-speech and NLU vendors
 * Provides ready to use speech-to-text and text-to-speech implementations like [Android platform speechkit](https://github.com/just-ai/aimybox-android-sdk/tree/master/google-platform-speechkit), [Google Cloud speechkit](https://github.com/just-ai/aimybox-android-sdk/tree/master/google-cloud-speechkit), [Houndify](https://github.com/just-ai/aimybox-android-sdk/tree/master/houndify-speechkit) or [Snowboy wake word trigger](https://github.com/just-ai/aimybox-android-sdk/tree/master/snowboy-speechkit)
 * Works with any NLU providers like [Aimylogic](https://help.aimybox.com/en/article/aimylogic-webhook-5quhb1/) or [Dialogflow](https://help.aimybox.com/en/article/dialogflow-agent-cqdvjn/)
 * Fully customizable and extendable, you can connect any other speech-to-text, text-to-speech and NLU services
