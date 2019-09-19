@@ -1,7 +1,6 @@
-<h1 align="center">
-    <br>
-    <a href="https://aimybox.com"><img src="https://i.imgur.com/DUCxPIa.gif"></a>
-    <br><br>
+<h1 align="center" style="color: red">
+    <a href="https://aimybox.com"><img src="https://i.imgur.com/qyCxMmO.gif" align="right"></a>
+    <br><br><br>
     Aimybox voice assistant
 </h1>
 
@@ -12,9 +11,6 @@
     <a href="https://twitter.com/intent/follow?screen_name=aimybox"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/aimybox.svg?label=Follow%20on%20Twitter&style=popout"></a>
     <a href="https://travis-ci.com/just-ai/aimybox-android-assistant"><img alt="Travis CI Build" src="https://api.travis-ci.org/just-ai/aimybox-android-assistant.svg?branch=master"></a>
     <a href="https://bintray.com/aimybox/aimybox-android-assistant/components/"><img alt="Bintray artifact" src="https://api.bintray.com/packages/aimybox/aimybox-android-assistant/components/images/download.svg"></a>
-</p>
-
-This repository contains all you need to embed intelligent voice assistant into your existing Android application, any Android device or Raspberry Pi.
 
 # Key Features
 
