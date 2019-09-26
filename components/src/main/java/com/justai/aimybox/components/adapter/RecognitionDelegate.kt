@@ -6,7 +6,6 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.view.isVisible
 import com.justai.aimybox.components.R
 import com.justai.aimybox.components.base.AdapterDelegate
 import com.justai.aimybox.components.extensions.inflate
@@ -26,9 +25,8 @@ object RecognitionDelegate :
 
         override fun bind(item: RecognitionWidget) {
             check(itemView is TextView)
-            itemView.text = item.previousText?.let { createDifferenceSpannedString(it, item.text) }
+            itemView.text = createDifferenceSpannedString(item.previousText.orEmpty(), item.text)
                 ?: item.text
-            itemView.isVisible = item.text.isNotBlank()
         }
 
         private fun createDifferenceSpannedString(old: String, new: String): CharSequence? {
