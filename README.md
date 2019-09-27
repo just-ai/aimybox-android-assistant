@@ -1,10 +1,5 @@
-<h1 align="center">
-    <br>
-    <a href="https://aimybox.com"><img src="https://app.aimybox.com/assets/images/aimybox.png"
-                                                                    height="200"></a>
-    <br><br>
-    Aimybox voice assistant
-</h1>
+<h1 align="center">Aimybox voice assistant</h1>
+<a href="https://aimybox.com"><img src="https://i.imgur.com/qyCxMmO.gif" align="right"></a>
 
 <h4 align="center">Open source voice assistant built on top of <a href="https://github.com/aimybox/aimybox-android-sdk">Aimybox SDK</a></h4>
 
@@ -13,14 +8,11 @@
     <a href="https://twitter.com/intent/follow?screen_name=aimybox"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/aimybox.svg?label=Follow%20on%20Twitter&style=popout"></a>
     <a href="https://travis-ci.com/just-ai/aimybox-android-assistant"><img alt="Travis CI Build" src="https://api.travis-ci.org/just-ai/aimybox-android-assistant.svg?branch=master"></a>
     <a href="https://bintray.com/aimybox/aimybox-android-assistant/components/"><img alt="Bintray artifact" src="https://api.bintray.com/packages/aimybox/aimybox-android-assistant/components/images/download.svg"></a>
-</p>
-
-This repository contains all you need to embed intelligent voice assistant into your existing Android application, any Android device or Raspberry Pi.
 
 # Key Features
 
 * Provides ready to use **UI components** for fast building of your voice assistant app
-* Modular and independent from speech-to-text and text-to-speech vendors
+* Modular and independent from speech-to-text, text-to-speech and NLU vendors
 * Provides ready to use speech-to-text and text-to-speech implementations like [Android platform speechkit](https://github.com/just-ai/aimybox-android-sdk/tree/master/google-platform-speechkit), [Google Cloud speechkit](https://github.com/just-ai/aimybox-android-sdk/tree/master/google-cloud-speechkit), [Houndify](https://github.com/just-ai/aimybox-android-sdk/tree/master/houndify-speechkit) or [Snowboy wake word trigger](https://github.com/just-ai/aimybox-android-sdk/tree/master/snowboy-speechkit)
 * Works with any NLU providers like [Aimylogic](https://help.aimybox.com/en/article/aimylogic-webhook-5quhb1/) or [Dialogflow](https://help.aimybox.com/en/article/dialogflow-agent-cqdvjn/)
 * Fully customizable and extendable, you can connect any other speech-to-text, text-to-speech and NLU services
