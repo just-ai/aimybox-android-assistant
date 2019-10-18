@@ -15,6 +15,7 @@ import com.justai.aimybox.model.reply.ImageReply
 import com.justai.aimybox.model.reply.Reply
 import com.justai.aimybox.model.reply.TextReply
 import com.justai.aimybox.speechtotext.SpeechToText
+import com.justai.aimybox.voicetrigger.VoiceTrigger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -54,6 +55,7 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(),
                 when (it) {
                     is SpeechToText.Event -> onSpeechToTextEvent(it)
                     is DialogApi.Event -> onDialogApiEvent(it)
+                    is VoiceTrigger.Event.Triggered -> isAssistantVisibleInternal.postValue(true)
                 }
             }
         }
@@ -106,14 +108,15 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(),
     private fun onSpeechToTextEvent(event: SpeechToText.Event) {
         val previousText =
             (widgets.value?.find { it is RecognitionWidget } as? RecognitionWidget)?.text
+
         when (event) {
-            is SpeechToText.Event.RecognitionStarted -> addWidget(RecognitionWidget())
-            is SpeechToText.Event.RecognitionPartialResult -> event.text?.takeIf { it.isNotBlank() }?.let { text ->
-                removeRecognitionWidgets { plus(RecognitionWidget(text, previousText)) }
-            }
-            is SpeechToText.Event.EmptyRecognitionResult, SpeechToText.Event.RecognitionCancelled -> {
-                removeRecognitionWidgets()
-            }
+            is SpeechToText.Event.RecognitionPartialResult -> event.text
+                ?.takeIf { it.isNotBlank() }
+                ?.let { text ->
+                    removeRecognitionWidgets { plus(RecognitionWidget(text, previousText)) }
+                }
+            is SpeechToText.Event.EmptyRecognitionResult,
+            SpeechToText.Event.RecognitionCancelled -> removeRecognitionWidgets()
             is SpeechToText.Event.SoundVolumeRmsChanged -> {
                 soundVolumeRmsMutable.postValue(event.rmsDb)
             }
@@ -124,7 +127,7 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(),
         when (event) {
             is DialogApi.Event.ResponseReceived -> {
                 removeButtonWidgets()
-                event.response?.replies?.forEach(::processReply)
+                event.response.replies.forEach(::processReply)
             }
             is DialogApi.Event.RequestSent -> {
                 removeRecognitionWidgets {

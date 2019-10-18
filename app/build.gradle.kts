@@ -54,6 +54,8 @@ repositories {
 
 dependencies {
 
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.0-beta-3")
+
     implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("androidx.recyclerview:recyclerview:1.0.0")
     implementation("androidx.constraintlayout:constraintlayout:1.1.3")
