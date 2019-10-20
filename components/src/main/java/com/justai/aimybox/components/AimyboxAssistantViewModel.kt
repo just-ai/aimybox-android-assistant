@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.justai.aimybox.Aimybox
 import com.justai.aimybox.api.DialogApi
 import com.justai.aimybox.components.widget.*
-import com.justai.aimybox.model.Request
 import com.justai.aimybox.model.reply.ButtonsReply
 import com.justai.aimybox.model.reply.ImageReply
 import com.justai.aimybox.model.reply.Reply
@@ -43,6 +42,7 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(),
     val urlIntents = urlIntentsInternal as ReceiveChannel<String>
 
     init {
+        aimybox.stateChannel.observe { L.i(it) }
         aimybox.exceptions.observe { L.e(it) }
 
         val events = Channel<Any>(Channel.UNLIMITED)
@@ -73,7 +73,7 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(),
     fun onButtonClick(button: Button) {
         removeButtonWidgets()
         when (button) {
-            is ResponseButton -> aimybox.send(Request(button.text))
+            is ResponseButton -> aimybox.sendRequest(button.text)
             is LinkButton -> urlIntentsInternal.safeOffer(button.url)
         }
     }
