@@ -43,8 +43,8 @@ If you want some details - there is how to do the same with your hands.
     }
     
     dependencies {
-        implementation("com.justai.aimybox:core:0.3.0")
-        implementation("com.justai.aimybox:components:0.1.5")
+        implementation("com.justai.aimybox:core:0.4.0")
+        implementation("com.justai.aimybox:components:0.1.6")
     }
 ```
 
@@ -52,7 +52,7 @@ If you want some details - there is how to do the same with your hands.
 2. Add one or more dependencies of third party speech-to-text and text-to-speech libraries. For example
 
 ```kotlin
-implementation("com.justai.aimybox:google-platform-speechkit:0.3.0")
+implementation("com.justai.aimybox:google-platform-speechkit:0.4.0")
 ```
 
 3. Create a new project in [Aimybox console](https://app.aimybox.com), enable some voice skills and **copy your project's API key**.
