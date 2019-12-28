@@ -4,8 +4,8 @@ import com.jfrog.bintray.gradle.BintrayExtension
 
 buildscript {
     val kotlinVersion = "1.3.50"
-    val aimyboxVersion = "0.5.0"
-    val componentsVersion = "0.1.7"
+    val aimyboxVersion = "0.7.0"
+    val componentsVersion = "0.1.8"
 
     extra.set("kotlinVersion", kotlinVersion)
     extra.set("aimyboxVersion", aimyboxVersion)
@@ -55,6 +55,13 @@ fun Project.configureBintrayPublishing(version: String) {
     configurePublication(publicationName, version)
 
     configure<BintrayExtension> {
+        val properties = java.util.Properties()
+        val propsFile = project.rootProject.file("local.properties")
+
+        if (propsFile.canRead()) {
+            properties.load(propsFile.inputStream())
+        }
+
         val bintrayUsername = properties["bintrayUser"] as? String
             ?: System.getProperty("BINTRAY_USER") ?: System.getenv("BINTRAY_USER")
         val bintrayKey = properties["bintrayKey"] as? String
