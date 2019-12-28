@@ -74,6 +74,7 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(),
         removeButtonWidgets()
         when (button) {
             is ResponseButton -> aimybox.sendRequest(button.text)
+            is PayloadButton -> aimybox.sendRequest(button.payload)
             is LinkButton -> urlIntentsInternal.safeOffer(button.url)
         }
     }
@@ -145,10 +146,11 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(),
             is ButtonsReply -> {
                 val buttons = reply.buttons.map { button ->
                     val url = button.url
-                    if (url != null) {
-                        LinkButton(button.text, url)
-                    } else {
-                        ResponseButton(button.text)
+                    val payload = button.payload
+                    when {
+                        url != null -> LinkButton(button.text, url)
+                        payload != null -> PayloadButton(button.text, payload)
+                        else -> ResponseButton(button.text)
                     }
                 }
                 addWidget(ButtonsWidget(buttons))
