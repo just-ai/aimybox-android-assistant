@@ -110,6 +110,7 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(),
             (widgets.value?.find { it is RecognitionWidget } as? RecognitionWidget)?.text
 
         when (event) {
+            is SpeechToText.Event.RecognitionStarted -> isAssistantVisibleInternal.postValue(true)
             is SpeechToText.Event.RecognitionPartialResult -> event.text
                 ?.takeIf { it.isNotBlank() }
                 ?.let { text ->
