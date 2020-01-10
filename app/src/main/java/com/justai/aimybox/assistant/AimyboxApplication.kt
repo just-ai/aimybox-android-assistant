@@ -8,6 +8,8 @@ import com.justai.aimybox.components.AimyboxProvider
 import com.justai.aimybox.core.Config
 import com.justai.aimybox.speechkit.google.platform.GooglePlatformSpeechToText
 import com.justai.aimybox.speechkit.google.platform.GooglePlatformTextToSpeech
+import com.justai.aimybox.speechkit.pocketsphinx.PocketsphinxAssets
+import com.justai.aimybox.speechkit.pocketsphinx.PocketsphinxSpeechToText
 import java.util.*
 
 class AimyboxApplication : Application(), AimyboxProvider {
@@ -22,7 +24,12 @@ class AimyboxApplication : Application(), AimyboxProvider {
         val unitId = UUID.randomUUID().toString()
 
         val textToSpeech = GooglePlatformTextToSpeech(context, Locale.ENGLISH)
-        val speechToText = GooglePlatformSpeechToText(context, Locale.ENGLISH)
+        val speechToText = PocketsphinxSpeechToText(PocketsphinxAssets.fromApkAssets(
+            context,
+            acousticModelFileName = "hmm/ru",
+            dictionaryFileName = "dictionary.txt",
+            grammarFileName = "grammar.gram"
+        ))
 
         val dialogApi = AimyboxDialogApi(AIMYBOX_API_KEY, unitId)
 

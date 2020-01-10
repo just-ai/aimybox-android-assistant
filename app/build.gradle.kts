@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId = "com.justai.aimybox.assistant"
 
-        minSdkVersion(21)
+        minSdkVersion(23)
         targetSdkVersion(29)
 
         versionName = componentsVersion
@@ -68,4 +68,5 @@ dependencies {
     implementation("com.justai.aimybox:components:$componentsVersion")
     implementation("com.justai.aimybox:core:$aimyboxVersion")
     implementation("com.justai.aimybox:google-platform-speechkit:$aimyboxVersion")
+    implementation("com.justai.aimybox:pocketsphinx-speechkit:$aimyboxVersion")
 }
