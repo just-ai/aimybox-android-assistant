@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <command id="@+id/cmd_echo">
+        <pattern value=".*"/>
+    </command>
+</resources>
