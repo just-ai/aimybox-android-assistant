@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Aimybox Assistant</string>
-    <string name="prompt">Your assistant is ready! Tap on button below to start recognition.</string>
+    <string name="app_name">Aimybox</string>
+    <string name="prompt">Your assistant is ready! Tap on the button below to start recognition.</string>
     <string name="initial_phrase">How can I help you?</string>
+    <string name="keyphrase">one two three</string>
 </resources>
