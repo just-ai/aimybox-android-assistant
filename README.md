@@ -1,7 +1,7 @@
 <h1 align="center">Aimybox voice assistant</h1>
 <a href="https://aimybox.com"><img src="https://i.imgur.com/qyCxMmO.gif" align="right"></a>
 
-<h4 align="center">Open source voice assistant built on top of <a href="https://github.com/aimybox/aimybox-android-sdk">Aimybox SDK</a></h4>
+<h4 align="center">Open source voice assistant built on top of <a href="https://github.com/just-ai/aimybox-android-sdk">Aimybox SDK</a></h4>
 
 <p align="center">
     <a href="https://gitter.im/aimybox/community"><img src="https://badges.gitter.im/amitmerchant1990/electron-markdownify.svg"></a>
