@@ -55,7 +55,7 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(),
                 when (it) {
                     is SpeechToText.Event -> onSpeechToTextEvent(it)
                     is DialogApi.Event -> onDialogApiEvent(it)
-                    is VoiceTrigger.Event.Triggered -> isAssistantVisibleInternal.postValue(true)
+                    is VoiceTrigger.Event.Triggered -> toggleAssistantView(true)
                 }
             }
         }
@@ -80,16 +80,20 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(),
     }
 
     fun onBackPressed() {
-        isAssistantVisibleInternal.postValue(false)
+        toggleAssistantView(false)
         aimybox.standby()
     }
 
     @RequiresPermission("android.permission.RECORD_AUDIO")
     fun onAssistantButtonClick() {
-        if (isAssistantVisible.value != true) {
-            isAssistantVisibleInternal.postValue(true)
-        }
+        toggleAssistantView(true)
         aimybox.toggleRecognition()
+    }
+
+    private fun toggleAssistantView(show: Boolean) {
+        if (isAssistantVisible.value != show) {
+            isAssistantVisibleInternal.postValue(show)
+        }
     }
 
     private fun removeButtonWidgets() {
@@ -111,7 +115,7 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(),
             (widgets.value?.find { it is RecognitionWidget } as? RecognitionWidget)?.text
 
         when (event) {
-            is SpeechToText.Event.RecognitionStarted -> isAssistantVisibleInternal.postValue(true)
+            is SpeechToText.Event.RecognitionStarted -> toggleAssistantView(true)
             is SpeechToText.Event.RecognitionPartialResult -> event.text
                 ?.takeIf { it.isNotBlank() }
                 ?.let { text ->
@@ -128,6 +132,7 @@ open class AimyboxAssistantViewModel(val aimybox: Aimybox) : ViewModel(),
     private fun onDialogApiEvent(event: DialogApi.Event) {
         when (event) {
             is DialogApi.Event.ResponseReceived -> {
+                toggleAssistantView(true)
                 removeButtonWidgets()
                 event.response.replies.forEach(::processReply)
             }
