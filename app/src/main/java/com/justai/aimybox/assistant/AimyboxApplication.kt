@@ -9,18 +9,23 @@ import com.justai.aimybox.core.Config
 import com.justai.aimybox.speechkit.google.platform.GooglePlatformTextToSpeech
 import com.justai.aimybox.speechkit.kaldi.KaldiAssets
 import com.justai.aimybox.speechkit.kaldi.KaldiSpeechToText
-import java.util.*
+import com.justai.aimybox.speechkit.kaldi.KaldiVoiceTrigger
 
 class AimyboxApplication : Application(), AimyboxProvider {
 
     override val aimybox by lazy { createAimybox(this) }
 
     private fun createAimybox(context: Context): Aimybox {
-        val textToSpeech = GooglePlatformTextToSpeech(context, Locale.getDefault())
-        val speechToText = KaldiSpeechToText(KaldiAssets.fromApkAssets(this, "model/${Locale.getDefault().language}"))
+        val assets = KaldiAssets.fromApkAssets(this, "model")
+
+        val textToSpeech = GooglePlatformTextToSpeech(context)
+        val speechToText = KaldiSpeechToText(assets)
+        val voiceTrigger = KaldiVoiceTrigger(assets, listOf("слушай"))
 
         val dialogApi = DummyDialogApi()
 
-        return Aimybox(Config.create(speechToText, textToSpeech, dialogApi))
+        return Aimybox(Config.create(speechToText, textToSpeech, dialogApi) {
+            this.voiceTrigger = voiceTrigger
+        })
     }
 }
