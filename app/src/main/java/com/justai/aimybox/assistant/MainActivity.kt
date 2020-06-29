@@ -1,5 +1,6 @@
 package com.justai.aimybox.assistant
 
+import android.Manifest
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -13,12 +14,7 @@ class MainActivity : AppCompatActivity() {
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        val assistantFragment = AimyboxAssistantFragment()
-
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.assistant_container, assistantFragment)
-            commit()
-        }
+        requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), 1)
     }
 
     override fun onBackPressed() {
@@ -27,4 +23,16 @@ class MainActivity : AppCompatActivity() {
         if (assistantFragment?.onBackPressed() != true) super.onBackPressed()
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        val assistantFragment = AimyboxAssistantFragment()
+
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.assistant_container, assistantFragment)
+            commit()
+        }
+    }
 }

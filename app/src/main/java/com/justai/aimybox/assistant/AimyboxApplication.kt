@@ -16,7 +16,7 @@ class AimyboxApplication : Application(), AimyboxProvider {
     override val aimybox by lazy { createAimybox(this) }
 
     private fun createAimybox(context: Context): Aimybox {
-        val assets = KaldiAssets.fromApkAssets(this, "model")
+        val assets = KaldiAssets.fromApkAssets(this, "model/ru")
 
         val textToSpeech = GooglePlatformTextToSpeech(context)
         val speechToText = KaldiSpeechToText(assets)

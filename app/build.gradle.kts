@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId = "com.justai.aimybox.assistant"
 
-        minSdkVersion(21)
+        minSdkVersion(23)
         targetSdkVersion(29)
 
         versionName = componentsVersion
