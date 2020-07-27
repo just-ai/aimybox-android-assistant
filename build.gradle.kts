@@ -18,7 +18,7 @@ buildscript {
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        classpath("com.android.tools.build:gradle:3.5.0")
+        classpath("com.android.tools.build:gradle:4.0.0")
         classpath("com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6")
         classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4")
         classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.7.5")
