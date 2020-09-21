@@ -127,12 +127,6 @@ class AimyboxAssistantFragment : Fragment(), CoroutineScope {
         if (requestCode == REQUEST_PERMISSION_CODE && permissions.firstOrNull() == Manifest.permission.RECORD_AUDIO) {
             if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
                 viewModel.onAssistantButtonClick()
-            } else {
-                requireActivity().supportFragmentManager.beginTransaction().apply {
-                    add(R.id.fragment_aimybox_container, MicrophonePermissionFragment())
-                    addToBackStack(null)
-                    commit()
-                }
             }
         }
     }
