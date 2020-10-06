@@ -4,8 +4,8 @@ import com.jfrog.bintray.gradle.BintrayExtension
 
 buildscript {
     val kotlinVersion = "1.3.50"
-    val aimyboxVersion = "0.7.0"
-    val componentsVersion = "0.1.8"
+    val aimyboxVersion = "0.12.0"
+    val componentsVersion = "0.1.9"
 
     extra.set("kotlinVersion", kotlinVersion)
     extra.set("aimyboxVersion", aimyboxVersion)
@@ -18,7 +18,7 @@ buildscript {
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        classpath("com.android.tools.build:gradle:3.5.0")
+        classpath("com.android.tools.build:gradle:4.0.1")
         classpath("com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6")
         classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4")
         classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.7.5")
@@ -150,13 +150,6 @@ fun Project.configurePublication(publicationName: String, publicationVersion: St
                             id.set("lambdatamer")
                             name.set("Alexander Sirota")
                             email.set("lambdatamer@gmail.com")
-                            organization.set("Aimybox")
-                            organizationUrl.set("https://aimybox.com")
-                            roles.set(listOf("Developer"))
-                        }
-                        developer {
-                            id.set("nikkas29")
-                            name.set("Nikita Kasenkov")
                             organization.set("Aimybox")
                             organizationUrl.set("https://aimybox.com")
                             roles.set(listOf("Developer"))

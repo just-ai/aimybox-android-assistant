@@ -67,6 +67,5 @@ dependencies {
     annotationProcessor("com.github.bumptech.glide:compiler:4.9.0")
 
     implementation("com.justai.aimybox:core:$aimyboxVersion")
-    implementation("com.justai.aimybox:google-platform-speechkit:$aimyboxVersion")
 
 }
