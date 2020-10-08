@@ -40,6 +40,13 @@ android {
         isWarningsAsErrors = false
         isAbortOnError = true
     }
+
+    packagingOptions {
+        exclude("META-INF/LICENSE.md")
+        exclude("META-INF/LICENSE-notice.md")
+        exclude("META-INF/kotlinx-coroutines-core.kotlin_module")
+        exclude("META-INF/kotlinx-serialization-runtime.kotlin_module")
+    }
 }
 
 repositories {
@@ -68,4 +75,6 @@ dependencies {
     implementation("com.justai.aimybox:components:$componentsVersion")
     implementation("com.justai.aimybox:core:$aimyboxVersion")
     implementation("com.justai.aimybox:google-platform-speechkit:$aimyboxVersion")
+    implementation("com.justai.aimybox:jaicf-api:$aimyboxVersion")
+    implementation("com.justai.jaicf:caila:0.7.0")
 }
