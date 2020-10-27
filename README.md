@@ -1,9 +1,9 @@
 <h1 align="center">Aimybox voice assistant</h1>
 <a href="https://aimybox.com"><img src="https://i.imgur.com/qyCxMmO.gif" align="right"></a>
 
-<h4 align="center">Open source voice assistant built on top of <a href="https://github.com/just-ai/aimybox-android-sdk">Aimybox SDK</a></h4>
+<h4>Open source voice assistant built on top of <a href="https://github.com/just-ai/aimybox-android-sdk">Aimybox SDK</a></h4>
 
-<p align="center">
+<p>
     <a href="https://twitter.com/intent/follow?screen_name=aimybox"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/aimybox.svg?label=Follow%20on%20Twitter&style=popout"></a>
     <a href="https://travis-ci.com/just-ai/aimybox-android-assistant"><img alt="Travis CI Build" src="https://api.travis-ci.org/just-ai/aimybox-android-assistant.svg?branch=master"></a>
     <a href="https://bintray.com/aimybox/aimybox-android-assistant/components/"><img alt="Bintray artifact" src="https://api.bintray.com/packages/aimybox/aimybox-android-assistant/components/images/download.svg"></a>
