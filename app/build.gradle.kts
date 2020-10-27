@@ -76,5 +76,5 @@ dependencies {
     implementation("com.justai.aimybox:core:$aimyboxVersion")
     implementation("com.justai.aimybox:google-platform-speechkit:$aimyboxVersion")
     implementation("com.justai.aimybox:jaicf-api:$aimyboxVersion")
-    implementation("com.justai.jaicf:caila:0.7.0")
+    implementation("com.justai.jaicf:caila:0.8.0")
 }
