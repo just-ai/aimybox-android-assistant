@@ -48,7 +48,6 @@ repositories {
     jcenter()
     mavenCentral()
     maven("https://kotlin.bintray.com/kotlinx")
-    maven("https://dl.bintray.com/aimybox/aimybox-android-sdk/")
 }
 
 dependencies {
