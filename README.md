@@ -104,6 +104,43 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 ```
 
+7. Make sure your app's theme contains Aimybox's styles:
+
+```xml
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- Customize Assistant components here -->
+        <item name="aimybox_assistantButtonTheme">@style/CustomAssistantButtonTheme</item>
+        <item name="aimybox_recognitionTheme">@style/CustomRecognitionWidgetTheme</item>
+        <item name="aimybox_responseTheme">@style/CustomResponseWidgetTheme</item>
+        <item name="aimybox_imageReplyTheme">@style/CustomImageReplyWidgetTheme</item>
+        <item name="aimybox_buttonReplyTheme">@style/CustomButtonReplyWidgetTheme</item>
+    </style>
+
+    <style name="CustomAssistantButtonTheme" parent="DefaultAssistantTheme.AssistantButton">
+    </style>
+
+    <style name="CustomRecognitionWidgetTheme" parent="DefaultAssistantTheme.Widget.Recognition">
+    </style>
+
+    <style name="CustomResponseWidgetTheme" parent="DefaultAssistantTheme.Widget.Response">
+    </style>
+
+    <style name="CustomButtonReplyWidgetTheme" parent="DefaultAssistantTheme.Widget.ButtonReply">
+    </style>
+
+    <style name="CustomImageReplyWidgetTheme" parent="DefaultAssistantTheme.Widget.ImageReply">
+    </style>
+
+</resources>
+```
+
 Now you can run your application and tap a small microphone button in bottom right corner of the screen.
 Try to say some phrase that corresponds to any of enabled voice skills in your Aimybox project.
 
