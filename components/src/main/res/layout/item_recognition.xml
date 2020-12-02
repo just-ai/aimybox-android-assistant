@@ -3,11 +3,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="match_parent"
 android:layout_height="wrap_content"
-android:orientation="vertical"
-xmlns:tools="http://schemas.android.com/tools">
+android:orientation="vertical">
 
 <TextView
     android:id="@+id/aimybox_recognition_textView"
-    style="?attr/aimybox_recognitionTheme"
-    android:background="@color/black" />
+    style="?attr/aimybox_recognitionTheme" />
 </LinearLayout>
