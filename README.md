@@ -15,7 +15,7 @@
 * Provides ready to use **UI components** for fast building of your voice assistant app
 * Modular and independent from speech-to-text, text-to-speech and NLU vendors
 * Provides ready to use speech-to-text and text-to-speech implementations like [Android platform speechkit](https://github.com/just-ai/aimybox-android-sdk/tree/master/google-platform-speechkit), [Google Cloud speechkit](https://github.com/just-ai/aimybox-android-sdk/tree/master/google-cloud-speechkit), [Houndify](https://github.com/just-ai/aimybox-android-sdk/tree/master/houndify-speechkit) or [Snowboy wake word trigger](https://github.com/just-ai/aimybox-android-sdk/tree/master/snowboy-speechkit)
-* Works with any NLU providers like [Aimylogic](https://help.aimybox.com/en/article/aimylogic-webhook-5quhb1/) or [Dialogflow](https://help.aimybox.com/en/article/dialogflow-agent-cqdvjn/)
+* Works with any NLU providers like [Aimylogic](https://help.aimybox.com/en/article/aimylogic-webhook-5quhb1/), [Rasa](https://github.com/just-ai/aimybox-android-sdk/tree/master/rasa-api) or [Dialogflow](https://help.aimybox.com/en/article/dialogflow-agent-cqdvjn/)
 * Fully customizable and extendable, you can connect any other speech-to-text, text-to-speech and NLU services
 * Open source under Apache 2.0, written in pure Kotlin
 * Embeddable into any application or device running Android
@@ -44,7 +44,7 @@ If you want some details - there is how to do the same with your hands.
     
     dependencies {
         implementation("com.justai.aimybox:core:0.15.0")
-        implementation("com.justai.aimybox:components:0.1.9")
+        implementation("com.justai.aimybox:components:0.1.10")
     }
 ```
 
