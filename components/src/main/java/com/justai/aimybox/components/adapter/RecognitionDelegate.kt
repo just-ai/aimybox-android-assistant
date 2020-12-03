@@ -5,11 +5,13 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.justai.aimybox.components.R
 import com.justai.aimybox.components.base.AdapterDelegate
 import com.justai.aimybox.components.extensions.inflate
 import com.justai.aimybox.components.widget.RecognitionWidget
+import kotlinx.android.synthetic.main.item_recognition.view.*
 import kotlin.math.max
 
 object RecognitionDelegate :
@@ -24,8 +26,8 @@ object RecognitionDelegate :
         private val hypotheticalTextColor = (textColor and 0x00FFFFFF) + 0x77000000
 
         override fun bind(item: RecognitionWidget) {
-            check(itemView is TextView)
-            itemView.text = createDifferenceSpannedString(item.previousText.orEmpty(), item.text)
+            val textView = findViewById<TextView>(R.id.aimybox_recognition_textView)
+            textView.text = createDifferenceSpannedString(item.previousText.orEmpty(), item.text)
                 ?: item.text
         }
 

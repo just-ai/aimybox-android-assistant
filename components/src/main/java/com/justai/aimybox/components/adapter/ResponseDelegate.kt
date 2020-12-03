@@ -17,8 +17,8 @@ object ResponseDelegate :
     class ViewHolder(itemView: View) : AdapterDelegate.ViewHolder<ResponseWidget>(itemView) {
 
         override fun bind(item: ResponseWidget) {
-            check(itemView is TextView)
-            itemView.text = item.text
+            val textView = findViewById<TextView>(R.id.aimybox_response_textView)
+            textView.text = item.text
         }
 
     }
