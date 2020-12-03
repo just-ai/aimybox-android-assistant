@@ -19,8 +19,8 @@ object RequestDelegate :
     class ViewHolder(itemView: View) : AdapterDelegate.ViewHolder<RequestWidget>(itemView) {
 
         override fun bind(item: RequestWidget) {
-            check(itemView is LinearLayout)
-            itemView.aimybox_recognition_textView.text = item.text
+            val textView = findViewById<TextView>(R.id.aimybox_recognition_textView)
+            textView.text = item.text
         }
     }
 

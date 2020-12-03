@@ -26,8 +26,8 @@ object RecognitionDelegate :
         private val hypotheticalTextColor = (textColor and 0x00FFFFFF) + 0x77000000
 
         override fun bind(item: RecognitionWidget) {
-            check(itemView is LinearLayout)
-            itemView.aimybox_recognition_textView.text = createDifferenceSpannedString(item.previousText.orEmpty(), item.text)
+            val textView = findViewById<TextView>(R.id.aimybox_recognition_textView)
+            textView.text = createDifferenceSpannedString(item.previousText.orEmpty(), item.text)
                 ?: item.text
         }
 
