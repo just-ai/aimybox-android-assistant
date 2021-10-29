@@ -70,11 +70,10 @@ implementation("com.just-ai.aimybox:google-platform-speechkit:$aimyboxVersion")
 ```
 
 3. Create a new project
-   in [Aimybox console](https://help.aimybox.com/en/article/introduction-to-aimybox-web-console-n49kfr/)
-   , enable some voice skills and **copy your project's API key**.
+   in [Aimybox console](https://help.aimybox.com/en/article/introduction-to-aimybox-web-console-n49kfr/), 
+   enable some voice skills and **copy your project's API key**.
 
-4.
-Instantiate [Aimybox](https://github.com/just-ai/aimybox-android-sdk/blob/master/core/src/main/java/com/justai/aimybox/Aimybox.kt)
+4. Instantiate [Aimybox](https://github.com/just-ai/aimybox-android-sdk/blob/master/core/src/main/java/com/justai/aimybox/Aimybox.kt)
 in
 your [Application](https://github.com/just-ai/aimybox-android-assistant/blob/master/app/src/main/java/com/justai/aimybox/assistant/AimyboxApplication.kt)
 class like that
@@ -96,7 +95,8 @@ class AimyboxApplication : Application(), AimyboxProvider {
 
         val dialogApi = AimyboxDialogApi(AIMYBOX_API_KEY, unitId)
 
-        return Aimybox(Config.create(speechToText, textToSpeech, dialogApi))
+        val aimyboxConfig = Config.create(speechToText, textToSpeech, dialogApi)
+        return Aimybox(aimyboxConfig)
     }
 }
 ```
