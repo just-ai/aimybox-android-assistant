@@ -55,7 +55,7 @@ pipeline {
             script {
                 env.color = 'good'
                 env.status = 'SUCCESS'
-                env.apk_link = "${env.download_link}|\n<Download APK>"
+                env.apk_link = "<${env.download_link}|Download APK>"
                 slackSendFunc()
             }
         }
