@@ -9,9 +9,6 @@ pipeline {
     agent {
         label 'slave01-onprem'
     }
-    triggers {
-        pollSCM '*/5 * * * *'
-    }
     environment {
         APP = "aimybox-android-assistant"
         BRANCH = sh(script: "echo ${BRANCH_NAME} | tr '[:upper:]' '[:lower:]'", returnStdout: true).trim()
