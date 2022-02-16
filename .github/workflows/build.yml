@@ -1,6 +1,13 @@
 name: Aimybox android assistant CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+      - dev
+      - release/*
+      - feature/*
+      - INT-184-github-actions
 
 jobs:
   build-save-artifact:
