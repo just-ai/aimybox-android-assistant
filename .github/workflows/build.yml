@@ -3,7 +3,7 @@ name: Aimybox android assistant CI
 on: [push]
 
 jobs:
-  build-save-artifact:
+  build-&-save-artifact:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,6 +29,10 @@ jobs:
         run: |
           echo ::set-output name=version_code::$(cat app/build.gradle.kts | grep versionCode | tr -d ' ' | sed -n '1p' | cut -f2 -d '=' | tr -d '\n')
         id: version_code
+
+      - name: Set apk name
+        run: |
+          mv ./app/build/outputs/apk/release/*.apk ./app/build/outputs/apk/release/${{ github.event.repository.name }}-${{ github.ref_name }}-version_${{ steps.version_name.outputs.version_name }}_${{ steps.version_code.outputs.version_code }}.apk
 
       - name: Save artifact
         uses: actions/upload-artifact@v2
