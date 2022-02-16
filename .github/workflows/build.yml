@@ -3,7 +3,7 @@ name: Aimybox android assistant CI
 on: [push]
 
 jobs:
-  build-&-save-artifact:
+  build-save-artifact:
     runs-on: ubuntu-latest
 
     steps:
