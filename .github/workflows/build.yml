@@ -1,0 +1,37 @@
+name: Aimybox android assistant CI
+
+on: [push]
+
+jobs:
+  build-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Build with gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew build
+
+      - name: Retrieve version_name
+        run: |
+          echo ::set-output name=version_name::$(cat app/build.gradle.kts | grep versionName | tr -d ' ' | sed -n '1p' | cut -f2 -d '=' | tr -d '\n')
+        id: version_name
+
+      - name: Retrieve version_code
+        run: |
+          echo ::set-output name=version_name::$(cat app/build.gradle.kts | grep versionCode | tr -d ' ' | sed -n '1p' | cut -f2 -d '=' | tr -d '\n')
+        id: version_code
+
+      - name: Save artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${GITHUB_REPOSITORY}-${GITHUB_REF_NAME}-version_${{ steps.version_name.outputs.version_name }}_${{ steps.version_code.outputs.version_code }}.apk
+          path: ./app/build/outputs/apk/release/*.apk
