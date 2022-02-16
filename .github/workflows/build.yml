@@ -39,3 +39,12 @@ jobs:
         with:
           name: ${{ github.event.repository.name }}-${{ github.ref_name }}-version_${{ steps.version_name.outputs.version_name }}_${{ steps.version_code.outputs.version_code }}.apk
           path: ./app/build/outputs/apk/release/*.apk
+
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: mobile-dev-builds
+          SLACK_USERNAME: GitHub Actions
+          SLACK_ICON: https://raw.githubusercontent.com/quintessence/slack-icons/master/images/octocat-spock-slack-icon.png
+          SLACK_COLOR: ${{ job.status }}
