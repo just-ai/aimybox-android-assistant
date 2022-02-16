@@ -35,3 +35,4 @@ jobs:
         with:
           name: ${GITHUB_REPOSITORY}-${GITHUB_REF_NAME}-version_${{ steps.version_name.outputs.version_name }}_${{ steps.version_code.outputs.version_code }}.apk
           path: ./app/build/outputs/apk/release/*.apk
+
