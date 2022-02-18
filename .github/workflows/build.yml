@@ -6,7 +6,6 @@ on:
       - master
       - dev
       - release/*
-      - INT-184-github-actions
 
 jobs:
   build-save-artifact:
