@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="initial_phrase">Hello! How can I help you?</string>
-
-    <string name="require_mic_access">Voice Assistant requires microphone access to work</string>
-    <string name="grant_permission">Please grant the permission to the app</string>
-    <string name="grant">Grant</string>
-    <string name="cancel">Cancel</string>
-</resources>

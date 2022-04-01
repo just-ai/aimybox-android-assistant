@@ -1,0 +1,55 @@
+name: Aimybox android assistant CI
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+      - release/*
+
+jobs:
+  build-save-artifact:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Build with gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew build
+
+      - name: Retrieve version_name
+        run: |
+          echo ::set-output name=version_name::$(cat app/build.gradle.kts | grep versionName | tr -d ' ' | sed -n '1p' | cut -f2 -d '=' | tr -d '\n')
+        id: version_name
+
+      - name: Retrieve version_code
+        run: |
+          echo ::set-output name=version_code::$(cat app/build.gradle.kts | grep versionCode | tr -d ' ' | sed -n '1p' | cut -f2 -d '=' | tr -d '\n')
+        id: version_code
+
+      - name: Set apk name
+        run: |
+          mv ./app/build/outputs/apk/release/*.apk ./app/build/outputs/apk/release/${{ github.event.repository.name }}-${{ github.ref_name }}-version_${{ steps.version_name.outputs.version_name }}_${{ steps.version_code.outputs.version_code }}.apk
+
+      - name: Save artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ github.event.repository.name }}-${{ github.ref_name }}-version_${{ steps.version_name.outputs.version_name }}_${{ steps.version_code.outputs.version_code }}.apk
+          path: ./app/build/outputs/apk/release/*.apk
+
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: mobile-dev-builds
+          SLACK_USERNAME: GitHub Actions
+          SLACK_ICON: https://raw.githubusercontent.com/quintessence/slack-icons/master/images/octocat-spock-slack-icon.png
+          SLACK_COLOR: ${{ job.status }}
