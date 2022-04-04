@@ -51,9 +51,11 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
 
-    implementation("com.justai.aimybox:components:$componentsVersion")
-    implementation("com.justai.aimybox:core:$aimyboxVersion")
-    implementation("com.justai.aimybox:dummy-api:$aimyboxVersion")
-    implementation("com.justai.aimybox:google-platform-speechkit:$aimyboxVersion")
-    implementation("com.justai.aimybox:pocketsphinx-speechkit:$aimyboxVersion")
+    implementation("com.just-ai.aimybox:components:$aimyboxVersion")
+    implementation("com.just-ai.aimybox:core:$aimyboxVersion")
+    implementation("com.just-ai.aimybox:dummy-api:$aimyboxVersion")
+    implementation("com.just-ai.aimybox:google-platform-speechkit:$aimyboxVersion")
+    implementation("com.just-ai.aimybox:pocketsphinx-speechkit:$aimyboxVersion")
+
+    implementation(files("pocketsphinx-android-lib/pocketsphinx-android-5prealpha-release.aar"))
 }

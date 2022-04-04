@@ -30,8 +30,9 @@ class AimyboxApplication : Application(), AimyboxProvider {
         val voiceTrigger = PocketsphinxVoiceTrigger(provider, getString(R.string.keyphrase))
         val dialogApi = DummyDialogApi()
 
-        return Aimybox(Config.create(speechToText, textToSpeech, dialogApi) {
-            this.voiceTrigger = voiceTrigger
-        })
+        val config = Config.create(speechToText, textToSpeech, dialogApi) {
+    //        this.voiceTrigger = voiceTrigger
+        }
+        return Aimybox(config, this)
     }
 }
