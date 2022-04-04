@@ -1,23 +1,21 @@
-val componentsVersion: String by rootProject.extra
 val aimyboxVersion: String by rootProject.extra
 
 plugins {
     id("com.android.application")
     kotlin("android")
-    id("kotlin-android-extensions")
 }
 
 android {
 
-    compileSdkVersion(29)
+    compileSdk = 31
 
     defaultConfig {
         applicationId = "com.justai.aimybox.assistant"
 
-        minSdkVersion(23)
-        targetSdkVersion(29)
+        minSdk = 21
+        targetSdk = 31
 
-        versionName = componentsVersion
+        versionName = aimyboxVersion
         versionCode = 1
     }
 
@@ -34,40 +32,30 @@ android {
             //TODO configure pro guard
         }
     }
-
-    lintOptions {
-        isCheckAllWarnings = true
-        isWarningsAsErrors = false
-        isAbortOnError = true
+    lint {
+        abortOnError = true
+        checkAllWarnings = true
+        warningsAsErrors = false
     }
-}
-
-repositories {
-    mavenLocal()
-    google()
-    jcenter()
-    mavenCentral()
-    maven("https://kotlin.bintray.com/kotlinx")
-    maven("https://dl.bintray.com/aimybox/aimybox-android-sdk/")
-    maven("https://dl.bintray.com/aimybox/aimybox-android-assistant/")
 }
 
 dependencies {
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.0-beta-3")
 
-    implementation("androidx.appcompat:appcompat:1.1.0")
-    implementation("androidx.recyclerview:recyclerview:1.0.0")
-    implementation("androidx.constraintlayout:constraintlayout:1.1.3")
-    implementation("androidx.core:core-ktx:1.1.0")
-    implementation("androidx.lifecycle:lifecycle-extensions:2.1.0")
+    implementation("androidx.appcompat:appcompat:1.4.1")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
+    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
 
-    implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
 
-    implementation("com.justai.aimybox:components:$componentsVersion")
-    implementation("com.justai.aimybox:core:$aimyboxVersion")
-    implementation("com.justai.aimybox:dummy-api:$aimyboxVersion")
-    implementation("com.justai.aimybox:google-platform-speechkit:$aimyboxVersion")
-    implementation("com.justai.aimybox:pocketsphinx-speechkit:$aimyboxVersion")
+    implementation("com.just-ai.aimybox:components:$aimyboxVersion")
+    implementation("com.just-ai.aimybox:core:$aimyboxVersion")
+    implementation("com.just-ai.aimybox:dummy-api:$aimyboxVersion")
+    implementation("com.just-ai.aimybox:google-platform-speechkit:$aimyboxVersion")
+    implementation("com.just-ai.aimybox:pocketsphinx-speechkit:$aimyboxVersion")
+
+    implementation(files("pocketsphinx-android-lib/pocketsphinx-android-5prealpha-release.aar"))
 }
