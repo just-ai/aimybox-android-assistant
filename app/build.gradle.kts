@@ -1,8 +1,12 @@
+val kotlin_version: String by extra
 val aimyboxVersion: String by rootProject.extra
 
 plugins {
     id("com.android.application")
     kotlin("android")
+}
+apply {
+    plugin("kotlin-android")
 }
 
 android {
@@ -41,18 +45,18 @@ android {
 
 dependencies {
 
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.0-beta-3")
-
-    implementation("androidx.appcompat:appcompat:1.4.1")
+    implementation("androidx.appcompat:appcompat:1.4.2")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
-    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.core:core-ktx:1.8.0")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1")
 
     implementation("com.just-ai.aimybox:components:$aimyboxVersion")
     implementation("com.just-ai.aimybox:core:$aimyboxVersion")
-    implementation("com.just-ai.aimybox:google-platform-speechkit:$aimyboxVersion")
+    implementation("com.just-ai.aimybox:yandex-speechkit:$aimyboxVersion")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0")
 
 }
