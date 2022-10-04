@@ -54,5 +54,6 @@ dependencies {
     implementation("com.just-ai.aimybox:components:$aimyboxVersion")
     implementation("com.just-ai.aimybox:core:$aimyboxVersion")
     implementation("com.just-ai.aimybox:google-platform-speechkit:$aimyboxVersion")
-
+    implementation("com.just-ai.aimybox:houndify-speechkit:$aimyboxVersion")
+    implementation("hound.android:hound-sdk:1.4.0")
 }

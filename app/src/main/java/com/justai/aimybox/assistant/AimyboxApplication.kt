@@ -8,6 +8,7 @@ import com.justai.aimybox.components.AimyboxProvider
 import com.justai.aimybox.core.Config
 import com.justai.aimybox.speechkit.google.platform.GooglePlatformSpeechToText
 import com.justai.aimybox.speechkit.google.platform.GooglePlatformTextToSpeech
+import com.justai.aimybox.speechkit.houndify.HoundifySpeechToText
 import java.util.*
 
 class AimyboxApplication : Application(), AimyboxProvider {
@@ -22,11 +23,12 @@ class AimyboxApplication : Application(), AimyboxProvider {
         val unitId = UUID.randomUUID().toString()
 
         val textToSpeech = GooglePlatformTextToSpeech(context, Locale.ENGLISH)
-        val speechToText = GooglePlatformSpeechToText(context, Locale.ENGLISH)
+        val speechToText = HoundifySpeechToText(context, "id", "key")
+            //GooglePlatformSpeechToText(context, Locale.ENGLISH)
 
         val dialogApi = AimyboxDialogApi(AIMYBOX_API_KEY, unitId)
 
         val aimyboxConfig = Config.create(speechToText, textToSpeech, dialogApi)
-        return Aimybox(aimyboxConfig)
+        return Aimybox(aimyboxConfig, context)
     }
 }

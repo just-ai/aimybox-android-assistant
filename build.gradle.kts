@@ -25,6 +25,7 @@ allprojects {
         mavenCentral()
         maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
         jcenter()
+        maven("https://houndify.com/maven/") { name = "Houndify" }
     }
 }
 
