@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         if ( ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO)
                 == PackageManager.PERMISSION_GRANTED) {
             lifecycleScope.launch {
-                (application as AimyboxApplication).aimybox.sendRequest("Hello", sendRequestEvent = true).join()
+               // (application as AimyboxApplication).aimybox.sendRequest("Hello", sendRequestEvent = true).join()
             }
         }
     }

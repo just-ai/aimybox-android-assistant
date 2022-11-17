@@ -16,8 +16,8 @@ class AimyboxApplication : Application(), AimyboxProvider {
         const val AIMYBOX_WEBHOOK_URL =
             "https://bot.jaicp.com/chatapi/webhook/zenbox/LNFjTAlh:67895092ac522776b15a126b7fcc1e775fd20b08"
 
-        private const val YANDEX_TOKEN = ""
-        private const val YANDEX_FOLDER_ID = ""
+        private const val YANDEX_TOKEN = BuildConfig.token
+        private const val YANDEX_FOLDER_ID = BuildConfig.folderId
     }
 
     override val aimybox by lazy { createAimybox(this) }
