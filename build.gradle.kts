@@ -1,5 +1,5 @@
 buildscript {
-    val kotlinVersion = "1.6.10"
+    val kotlinVersion = "1.8.21"
     val aimyboxVersion = "0.17.6-alpha.2"
 
     extra.set("kotlinVersion", kotlinVersion)
@@ -12,7 +12,7 @@ buildscript {
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        classpath("com.android.tools.build:gradle:7.3.0")
+        classpath("com.android.tools.build:gradle:7.1.3")
     }
 
 }

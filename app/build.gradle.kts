@@ -17,13 +17,13 @@ android {
 
     namespace = "com.justai.aimybox.assistant"
 
-    compileSdk = 31
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "com.justai.aimybox.assistant"
 
         minSdk = 21
-        targetSdk = 30
+        targetSdk = 33
 
         versionName = aimyboxVersion
         versionCode = 1
