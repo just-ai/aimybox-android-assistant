@@ -1,6 +1,6 @@
 buildscript {
     val kotlinVersion = "1.6.10"
-    val aimyboxVersion = "0.17.6.1-alpha.1"
+    val aimyboxVersion = "0.17.6-alpha.2"
 
     extra.set("kotlinVersion", kotlinVersion)
     extra.set("aimyboxVersion", aimyboxVersion)
